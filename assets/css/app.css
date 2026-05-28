@@ -191,6 +191,29 @@ h1 {
   align-items: center;
 }
 
+.user-chip {
+  min-height: 40px;
+  display: grid;
+  align-content: center;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.user-chip span,
+.user-chip small {
+  display: block;
+  line-height: 1.1;
+}
+
+.user-chip small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
 .icon-button,
 .primary-action,
 .secondary-action {
@@ -620,6 +643,55 @@ h1 {
   padding: 28px 16px;
   text-align: center;
   color: var(--muted);
+}
+
+.login-shell {
+  width: min(100%, 420px);
+  margin: 8vh auto 0;
+}
+
+.login-card {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.login-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+}
+
+.login-form {
+  display: grid;
+  gap: 10px;
+}
+
+.login-error {
+  min-height: 20px;
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.login-demo {
+  display: grid;
+  gap: 6px;
+  padding-top: 4px;
+  border-top: 1px solid var(--line);
+}
+
+body:not(.is-authenticated) .sidebar,
+body:not(.is-authenticated) .topbar,
+body:not(.is-authenticated) .status-strip {
+  display: none;
+}
+
+body:not(.is-authenticated) .app-shell {
+  display: block;
 }
 
 @media (min-width: 720px) {

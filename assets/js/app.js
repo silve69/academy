@@ -99,6 +99,7 @@ const routes = {
 
 let appData = structuredClone(fallbackData);
 let currentRoute = "dashboard";
+let currentUser = null;
 
 const view = document.querySelector("#app-view");
 const title = document.querySelector("#view-title");
@@ -107,6 +108,10 @@ const apiDot = document.querySelector("#api-dot");
 const quickAction = document.querySelector("#quick-action");
 const refreshButton = document.querySelector("#refresh-button");
 const nextClassSidebar = document.querySelector("#next-class-sidebar");
+const logoutButton = document.querySelector("#logout-button");
+const userChip = document.querySelector("#user-chip");
+const userName = document.querySelector("#user-name");
+const userRole = document.querySelector("#user-role");
 
 function money(value) {
   return new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 }).format(Number(value || 0));
@@ -124,6 +129,46 @@ function percent(value, total) {
 function apiData(payload) {
   if (!payload || typeof payload !== "object") return null;
   return payload.success && Object.hasOwn(payload, "data") ? payload.data : payload;
+}
+
+function canAccess(route) {
+  if (!currentUser) return false;
+  const permissions = currentUser.permissions || {};
+  return Boolean(permissions["*"] || permissions[route]?.view);
+}
+
+function firstAllowedRoute() {
+  return Object.keys(routes).find((route) => canAccess(route)) || "dashboard";
+}
+
+function applyPermissions() {
+  document.querySelectorAll("[data-route]").forEach((link) => {
+    const route = link.dataset.route;
+    link.hidden = Boolean(currentUser) && !canAccess(route);
+  });
+}
+
+async function apiRequest(url, options = {}) {
+  const response = await fetch(url, {
+    credentials: "same-origin",
+    ...options,
+    headers: {
+      Accept: "application/json",
+      ...(options.headers || {})
+    }
+  });
+  const payload = await response.json().catch(() => null);
+
+  if (response.status === 401 && !url.includes("auth.php?action=login")) {
+    currentUser = null;
+    showLogin();
+  }
+
+  if (!response.ok) {
+    throw new Error(payload?.message || `HTTP ${response.status}`);
+  }
+
+  return apiData(payload);
 }
 
 function normalizeStatus(value) {
@@ -343,16 +388,19 @@ function normalizeSettings(settings) {
 }
 
 async function fetchResource(resource) {
-  const response = await fetch(`api/${resource}.php`, { headers: { Accept: "application/json" } });
-  if (!response.ok) throw new Error(`${resource}: HTTP ${response.status}`);
-  return apiData(await response.json());
+  return apiRequest(`api/${resource}.php`);
 }
 
 async function loadData() {
+  if (!currentUser) {
+    showLogin();
+    return;
+  }
+
   apiStatus.textContent = "Conectando con API...";
   apiDot.className = "status-dot";
 
-  const resources = ["alumnos", "grupos", "horarios", "pagos", "comunicacion", "deportes", "caja", "entrenadores", "evaluaciones", "eventos", "inventario", "configuracion"];
+  const resources = ["alumnos", "grupos", "horarios", "pagos", "comunicacion", "deportes", "caja", "entrenadores", "evaluaciones", "eventos", "inventario", "configuracion"].filter((resource) => canAccess(resource) || ["alumnos", "grupos", "horarios", "pagos", "comunicacion"].includes(resource));
   const results = await Promise.allSettled(resources.map((resource) => fetchResource(resource)));
   const payload = {};
   let loaded = 0;
@@ -379,6 +427,10 @@ async function loadData() {
 
 function setRoute(route) {
   currentRoute = routes[route] ? route : "dashboard";
+  if (currentUser && !canAccess(currentRoute)) {
+    currentRoute = firstAllowedRoute();
+    location.hash = currentRoute;
+  }
   document.querySelectorAll("[data-route]").forEach((link) => {
     link.classList.toggle("is-active", link.dataset.route === currentRoute);
   });
@@ -843,6 +895,82 @@ function bindViewEvents() {
   });
 }
 
+function showLogin(message = "") {
+  document.body.classList.remove("is-authenticated");
+  title.textContent = "Iniciar sesion";
+  view.innerHTML = `
+    <section class="login-shell">
+      <form class="login-card" id="login-form">
+        <img class="login-logo" src="logo/logo_sportik.png" alt="SportIk">
+        <div>
+          <p class="eyebrow">Acceso SportIk</p>
+          <h1>Iniciar sesion</h1>
+          <p class="meta">Entra con un perfil para ver solo los modulos permitidos.</p>
+        </div>
+        <label>
+          <span class="label">Email</span>
+          <input class="input" name="email" type="email" value="admin@sportik.test" autocomplete="username" required>
+        </label>
+        <label>
+          <span class="label">Contrasena</span>
+          <input class="input" name="password" type="password" value="admin123" autocomplete="current-password" required>
+        </label>
+        <button class="primary-action" type="submit">Entrar</button>
+        <p class="login-error" id="login-error">${message}</p>
+        <div class="login-demo">
+          <span class="meta">Demo: admin@sportik.test / admin123</span>
+          <span class="meta">Coach: laura.coach@sportik.test / coach123</span>
+          <span class="meta">Caja: caja@sportik.test / caja123</span>
+        </div>
+      </form>
+    </section>
+  `;
+
+  document.querySelector("#login-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const error = document.querySelector("#login-error");
+    error.textContent = "Validando acceso...";
+
+    try {
+      currentUser = await apiRequest("api/Auth.php?action=login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: form.get("email"),
+          password: form.get("password")
+        })
+      });
+      onAuthenticated();
+    } catch (errorMessage) {
+      error.textContent = errorMessage.message || "No se pudo iniciar sesion";
+    }
+  });
+}
+
+function onAuthenticated() {
+  document.body.classList.add("is-authenticated");
+  userChip.hidden = false;
+  userName.textContent = currentUser.name || "Usuario";
+  userRole.textContent = currentUser.role || "perfil";
+  applyPermissions();
+
+  const targetRoute = canAccess(currentRoute) ? currentRoute : firstAllowedRoute();
+  currentRoute = targetRoute;
+  location.hash = targetRoute;
+  setRoute(targetRoute);
+  loadData();
+}
+
+async function loadSession() {
+  try {
+    currentUser = await apiRequest("api/Auth.php?action=me");
+    onAuthenticated();
+  } catch (error) {
+    showLogin();
+  }
+}
+
 const renderers = {
   dashboard: renderDashboard,
   alumnos: renderStudents,
@@ -894,6 +1022,16 @@ document.querySelectorAll("[data-route]").forEach((link) => {
 });
 
 refreshButton.addEventListener("click", loadData);
+logoutButton.addEventListener("click", async () => {
+  try {
+    await apiRequest("api/Auth.php?action=logout", { method: "POST" });
+  } catch (error) {
+    // The local session is cleared even if the network response is interrupted.
+  }
+  currentUser = null;
+  appData = structuredClone(fallbackData);
+  showLogin();
+});
 
-setRoute(location.hash.replace("#", "") || "dashboard");
-loadData();
+showLogin();
+loadSession();
