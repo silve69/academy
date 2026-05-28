@@ -12,10 +12,19 @@ if (is_file($localConfigPath)) {
 
 date_default_timezone_set($baseConfig['app']['timezone'] ?? 'America/Mexico_City');
 
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_name('sportik_session');
+    session_start([
+        'cookie_httponly' => true,
+        'cookie_samesite' => 'Lax',
+    ]);
+}
+
 require_once __DIR__ . '/Response.php';
 require_once __DIR__ . '/Database.php';
 require_once __DIR__ . '/SampleData.php';
 require_once __DIR__ . '/Repository.php';
+require_once __DIR__ . '/AuthService.php';
 
 function applyCors(array $config): void
 {
