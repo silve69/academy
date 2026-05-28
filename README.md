@@ -28,3 +28,16 @@ Aplicacion web movil-first para administrar una academia deportiva.
 5. Abre `http://localhost/projects/sportik`.
 
 Si MySQL no esta configurado todavia, la API y el frontend usan datos de ejemplo para poder revisar el MVP.
+
+## Endpoints MVP
+
+- `api/dashboard.php`
+- `api/alumnos.php`
+- `api/grupos.php`
+- `api/horarios.php`
+- `api/asistencia.php`
+- `api/pagos.php`
+- `api/comunicacion.php`
+- `api/reportes.php`
+
+La interfaz consulta estos endpoints y normaliza respuestas de MySQL o datos demo.
