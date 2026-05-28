@@ -42,3 +42,12 @@ Si MySQL no esta configurado todavia, la API y el frontend usan datos de ejemplo
 - `api/reportes.php`
 
 La interfaz consulta estos endpoints y normaliza respuestas de MySQL o datos demo.
+
+## Accesos demo
+
+- Administrador: `admin@sportik.test` / `admin123`
+- Entrenador: `laura.coach@sportik.test` / `coach123`
+- Staff: `marta.staff@sportik.test` / `staff123`
+- Caja: `caja@sportik.test` / `caja123`
+
+Los permisos se cargan desde `role_permissions` y el frontend oculta los modulos no permitidos para cada perfil.

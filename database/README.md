@@ -26,6 +26,13 @@ Todos los recursos soportan `GET /api/{recurso}`, `GET /api/{recurso}/{id}`, `PO
 
 Recursos principales: `alumnos`, `grupos`, `horarios`, `asistencia`, `pagos`, `comunicacion`, `deportes`, `disciplinas`, `cortes`, `gastos`, `entrenadores`, `evaluaciones`, `eventos`, `torneos`, `productos`, `inventario`, `ventas`, `stock`, `roles`, `usuarios`, `sucursales`, `canchas`, `metodos`, `conceptos`, `plantillas` y `academia`.
 
+## Perfiles y accesos
+
+- `roles` define perfiles administrativos.
+- `role_permissions` define permisos por modulo: ver, crear, actualizar y eliminar.
+- `users.password_hash` usa `password_hash()` de PHP.
+- Acceso demo administrador: `admin@sportik.test` / `admin123`.
+
 ## Decisiones principales
 
 - La tabla de grupos sigue siendo `sport_groups` para evitar conflictos con palabras reservadas de MySQL.

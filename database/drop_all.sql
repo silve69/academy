@@ -40,6 +40,7 @@ DROP TABLE IF EXISTS academy_settings;
 DROP TABLE IF EXISTS tutors;
 DROP TABLE IF EXISTS students;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS role_permissions;
 DROP TABLE IF EXISTS branches;
 DROP TABLE IF EXISTS roles;
 

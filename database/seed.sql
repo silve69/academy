@@ -36,9 +36,11 @@ DELETE FROM branches;
 DELETE FROM tutors;
 DELETE FROM students;
 DELETE FROM users;
+DELETE FROM role_permissions;
 DELETE FROM roles;
 
 ALTER TABLE roles AUTO_INCREMENT = 1;
+ALTER TABLE role_permissions AUTO_INCREMENT = 1;
 ALTER TABLE branches AUTO_INCREMENT = 1;
 ALTER TABLE users AUTO_INCREMENT = 1;
 ALTER TABLE academy_settings AUTO_INCREMENT = 1;
@@ -78,16 +80,45 @@ INSERT INTO roles (id, name, description) VALUES
   (3, 'staff', 'Apoya altas, pagos y comunicacion'),
   (4, 'caja', 'Opera ventas, gastos y cortes');
 
+INSERT INTO role_permissions (role_id, module, can_view, can_create, can_update, can_delete) VALUES
+  (1, '*', TRUE, TRUE, TRUE, TRUE),
+  (2, 'dashboard', TRUE, FALSE, FALSE, FALSE),
+  (2, 'alumnos', TRUE, FALSE, TRUE, FALSE),
+  (2, 'grupos', TRUE, FALSE, TRUE, FALSE),
+  (2, 'deportes', TRUE, FALSE, FALSE, FALSE),
+  (2, 'calendario', TRUE, TRUE, TRUE, FALSE),
+  (2, 'asistencia', TRUE, TRUE, TRUE, FALSE),
+  (2, 'entrenadores', TRUE, FALSE, FALSE, FALSE),
+  (2, 'evaluaciones', TRUE, TRUE, TRUE, FALSE),
+  (2, 'eventos', TRUE, FALSE, FALSE, FALSE),
+  (2, 'comunicacion', TRUE, TRUE, FALSE, FALSE),
+  (2, 'reportes', TRUE, FALSE, FALSE, FALSE),
+  (3, 'dashboard', TRUE, FALSE, FALSE, FALSE),
+  (3, 'alumnos', TRUE, TRUE, TRUE, FALSE),
+  (3, 'grupos', TRUE, TRUE, TRUE, FALSE),
+  (3, 'deportes', TRUE, TRUE, TRUE, FALSE),
+  (3, 'calendario', TRUE, TRUE, TRUE, FALSE),
+  (3, 'asistencia', TRUE, TRUE, TRUE, FALSE),
+  (3, 'pagos', TRUE, TRUE, TRUE, FALSE),
+  (3, 'comunicacion', TRUE, TRUE, TRUE, FALSE),
+  (3, 'eventos', TRUE, TRUE, TRUE, FALSE),
+  (3, 'reportes', TRUE, FALSE, FALSE, FALSE),
+  (4, 'dashboard', TRUE, FALSE, FALSE, FALSE),
+  (4, 'pagos', TRUE, TRUE, TRUE, FALSE),
+  (4, 'caja', TRUE, TRUE, TRUE, FALSE),
+  (4, 'inventario', TRUE, TRUE, TRUE, FALSE),
+  (4, 'reportes', TRUE, FALSE, FALSE, FALSE);
+
 INSERT INTO branches (id, name, code, address, phone, status) VALUES
   (1, 'SportIk Centro', 'CENTRO', 'Av. Principal 100, Centro', '555-100-0100', 'active'),
   (2, 'SportIk Norte', 'NORTE', 'Av. Norte 220, Industrial', '555-100-0200', 'active');
 
 INSERT INTO users (id, role_id, branch_id, name, email, password_hash, phone, status) VALUES
-  (1, 1, 1, 'Admin SportIk', 'admin@sportik.test', '$2y$10$demoHashForLocalSeedOnly00000000000000000000000000', '555-100-0001', 'active'),
-  (2, 2, 1, 'Laura Medina', 'laura.coach@sportik.test', '$2y$10$demoHashForLocalSeedOnly00000000000000000000000000', '555-100-0002', 'active'),
-  (3, 2, 1, 'Carlos Vega', 'carlos.coach@sportik.test', '$2y$10$demoHashForLocalSeedOnly00000000000000000000000000', '555-100-0003', 'active'),
-  (4, 3, 1, 'Marta Rios', 'marta.staff@sportik.test', '$2y$10$demoHashForLocalSeedOnly00000000000000000000000000', '555-100-0004', 'active'),
-  (5, 4, 1, 'Ivan Caja', 'caja@sportik.test', '$2y$10$demoHashForLocalSeedOnly00000000000000000000000000', '555-100-0005', 'active');
+  (1, 1, 1, 'Admin SportIk', 'admin@sportik.test', '$2y$10$mhKMjXZOW0JbpzutXtLMYe5nln27LIo9h.d6pu3UIj.4r89jEmCea', '555-100-0001', 'active'),
+  (2, 2, 1, 'Laura Medina', 'laura.coach@sportik.test', '$2y$10$RqGYBmu9QmhUy3/nOFVtYuFcroPGVwgHPOTG/bUINSBR4GO5I2aI2', '555-100-0002', 'active'),
+  (3, 2, 1, 'Carlos Vega', 'carlos.coach@sportik.test', '$2y$10$RqGYBmu9QmhUy3/nOFVtYuFcroPGVwgHPOTG/bUINSBR4GO5I2aI2', '555-100-0003', 'active'),
+  (4, 3, 1, 'Marta Rios', 'marta.staff@sportik.test', '$2y$10$DEqnKQgOSjIOn7npKa/0fe0Yoi93DoN0ww8JtfibmOLhqYYJG8yp2', '555-100-0004', 'active'),
+  (5, 4, 1, 'Ivan Caja', 'caja@sportik.test', '$2y$10$xyYZsY2UoEjqp6I88dA0i.Fma0sxnTNK5rN0YUZbrrKBTk72kwpWC', '555-100-0005', 'active');
 
 INSERT INTO academy_settings (setting_key, setting_value, setting_group, description, updated_by) VALUES
   ('academia_nombre', 'SportIk Academy', 'academia', 'Nombre publico de la academia', 1),

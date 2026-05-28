@@ -41,6 +41,7 @@ DROP TABLE IF EXISTS branches;
 DROP TABLE IF EXISTS tutors;
 DROP TABLE IF EXISTS students;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS role_permissions;
 DROP TABLE IF EXISTS roles;
 
 SET FOREIGN_KEY_CHECKS = 1;
@@ -50,6 +51,20 @@ CREATE TABLE roles (
   name VARCHAR(40) NOT NULL UNIQUE,
   description VARCHAR(160) NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE role_permissions (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  role_id INT UNSIGNED NOT NULL,
+  module VARCHAR(60) NOT NULL,
+  can_view BOOLEAN NOT NULL DEFAULT TRUE,
+  can_create BOOLEAN NOT NULL DEFAULT FALSE,
+  can_update BOOLEAN NOT NULL DEFAULT FALSE,
+  can_delete BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_role_permissions_role FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE,
+  UNIQUE KEY uq_role_permissions_module (role_id, module),
+  INDEX idx_role_permissions_role (role_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE branches (
