@@ -26,18 +26,14 @@ if ($resource === '') {
         'name' => $config['app']['name'] ?? 'SportIk API',
         'endpoints' => [
             'GET /api/dashboard',
-            'GET /api/alumnos',
-            'GET /api/alumnos/{id}',
-            'POST /api/alumnos',
-            'PUT /api/alumnos/{id}',
-            'DELETE /api/alumnos/{id}',
-            'GET /api/grupos',
-            'GET /api/horarios',
-            'GET /api/asistencia',
-            'GET /api/pagos',
-            'GET /api/comunicacion',
             'GET /api/reportes',
+            'GET /api/{recurso}',
+            'GET /api/{recurso}/{id}',
+            'POST /api/{recurso}',
+            'PUT /api/{recurso}/{id}',
+            'DELETE /api/{recurso}/{id}',
         ],
+        'recursos' => Repository::resources(),
     ], 'SportIk API lista', $meta);
 }
 
