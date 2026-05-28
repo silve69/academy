@@ -4,22 +4,37 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
-TRUNCATE TABLE messages;
-TRUNCATE TABLE message_templates;
-TRUNCATE TABLE payments;
-TRUNCATE TABLE attendance;
-TRUNCATE TABLE classes;
-TRUNCATE TABLE schedules;
-TRUNCATE TABLE student_groups;
-TRUNCATE TABLE sport_groups;
-TRUNCATE TABLE sports;
-TRUNCATE TABLE documents;
-TRUNCATE TABLE emergency_contacts;
-TRUNCATE TABLE student_tutors;
-TRUNCATE TABLE tutors;
-TRUNCATE TABLE students;
-TRUNCATE TABLE users;
-TRUNCATE TABLE roles;
+DELETE FROM messages;
+DELETE FROM message_templates;
+DELETE FROM payments;
+DELETE FROM attendance;
+DELETE FROM classes;
+DELETE FROM schedules;
+DELETE FROM student_groups;
+DELETE FROM documents;
+DELETE FROM emergency_contacts;
+DELETE FROM student_tutors;
+DELETE FROM sport_groups;
+DELETE FROM sports;
+DELETE FROM tutors;
+DELETE FROM students;
+DELETE FROM users;
+DELETE FROM roles;
+
+ALTER TABLE roles AUTO_INCREMENT = 1;
+ALTER TABLE users AUTO_INCREMENT = 1;
+ALTER TABLE students AUTO_INCREMENT = 1;
+ALTER TABLE tutors AUTO_INCREMENT = 1;
+ALTER TABLE emergency_contacts AUTO_INCREMENT = 1;
+ALTER TABLE documents AUTO_INCREMENT = 1;
+ALTER TABLE sports AUTO_INCREMENT = 1;
+ALTER TABLE sport_groups AUTO_INCREMENT = 1;
+ALTER TABLE schedules AUTO_INCREMENT = 1;
+ALTER TABLE classes AUTO_INCREMENT = 1;
+ALTER TABLE attendance AUTO_INCREMENT = 1;
+ALTER TABLE payments AUTO_INCREMENT = 1;
+ALTER TABLE message_templates AUTO_INCREMENT = 1;
+ALTER TABLE messages AUTO_INCREMENT = 1;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
