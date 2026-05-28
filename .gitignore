@@ -1,0 +1,7 @@
+.env
+api/config.local.php
+node_modules/
+vendor/
+*.log
+.DS_Store
+Thumbs.db
