@@ -3,21 +3,12 @@
 final class Repository
 {
     private const TABLES = [
-        'alumnos' => 'alumnos',
-        'grupos' => 'grupos',
-        'horarios' => 'horarios',
-        'asistencia' => 'asistencia',
-        'pagos' => 'pagos',
-        'comunicacion' => 'comunicacion',
-    ];
-
-    private const WRITABLE_FIELDS = [
-        'alumnos' => ['nombre', 'edad', 'telefono_tutor', 'email_tutor', 'estado', 'grupo_id', 'fecha_inscripcion'],
-        'grupos' => ['nombre', 'disciplina', 'nivel', 'entrenador', 'capacidad', 'activos'],
-        'horarios' => ['grupo_id', 'dia', 'hora_inicio', 'hora_fin', 'lugar'],
-        'asistencia' => ['alumno_id', 'grupo_id', 'fecha', 'estado', 'observaciones'],
-        'pagos' => ['alumno_id', 'concepto', 'monto', 'fecha_vencimiento', 'fecha_pago', 'estado'],
-        'comunicacion' => ['titulo', 'mensaje', 'canal', 'grupo_id', 'enviado_a', 'fecha_envio', 'estado'],
+        'alumnos' => 'students',
+        'grupos' => 'sport_groups',
+        'horarios' => 'schedules',
+        'asistencia' => 'attendance',
+        'pagos' => 'payments',
+        'comunicacion' => 'messages',
     ];
 
     public function __construct(private readonly ?PDO $pdo, private readonly array $fallback)
@@ -31,27 +22,7 @@ final class Repository
         }
 
         try {
-            $table = $this->table($resource);
-            $sql = "SELECT * FROM {$table}";
-            $params = [];
-            $where = [];
-
-            foreach ($this->allowedFilters($resource) as $field) {
-                if (isset($query[$field]) && $query[$field] !== '') {
-                    $where[] = "{$field} = :{$field}";
-                    $params[":{$field}"] = $query[$field];
-                }
-            }
-
-            if ($where) {
-                $sql .= ' WHERE ' . implode(' AND ', $where);
-            }
-
-            $sql .= ' ORDER BY id DESC';
-            $statement = $this->pdo->prepare($sql);
-            $statement->execute($params);
-
-            return $statement->fetchAll();
+            return $this->query($this->listSql($resource));
         } catch (Throwable) {
             return $this->filterFallback($resource, $query);
         }
@@ -64,8 +35,7 @@ final class Repository
         }
 
         try {
-            $table = $this->table($resource);
-            $statement = $this->pdo->prepare("SELECT * FROM {$table} WHERE id = :id LIMIT 1");
+            $statement = $this->pdo->prepare($this->findSql($resource));
             $statement->execute([':id' => $id]);
             $row = $statement->fetch();
 
@@ -77,7 +47,7 @@ final class Repository
 
     public function create(string $resource, array $payload): array
     {
-        $payload = $this->onlyWritable($resource, $payload);
+        $payload = $this->toDatabasePayload($resource, $payload);
 
         if (!$this->pdo || $payload === []) {
             return $this->createFallback($resource, $payload);
@@ -105,7 +75,7 @@ final class Repository
 
     public function update(string $resource, int $id, array $payload): ?array
     {
-        $payload = $this->onlyWritable($resource, $payload);
+        $payload = $this->toDatabasePayload($resource, $payload);
 
         if (!$this->pdo || $payload === []) {
             return $this->updateFallback($resource, $id, $payload);
@@ -155,14 +125,14 @@ final class Repository
         try {
             return [
                 'resumen' => [
-                    'alumnos_activos' => (int) $this->scalar("SELECT COUNT(*) FROM alumnos WHERE estado = 'activo'"),
-                    'grupos_activos' => (int) $this->scalar('SELECT COUNT(*) FROM grupos'),
-                    'pagos_pendientes' => (int) $this->scalar("SELECT COUNT(*) FROM pagos WHERE estado IN ('pendiente', 'vencido')"),
+                    'alumnos_activos' => (int) $this->scalar("SELECT COUNT(*) FROM students WHERE status = 'active'"),
+                    'grupos_activos' => (int) $this->scalar("SELECT COUNT(*) FROM sport_groups WHERE status = 'active'"),
+                    'pagos_pendientes' => (int) $this->scalar("SELECT COUNT(*) FROM payments WHERE status IN ('pending', 'overdue')"),
                     'asistencia_hoy' => $this->attendancePercentToday(),
                 ],
-                'proximos_horarios' => $this->query('SELECT * FROM horarios ORDER BY id DESC LIMIT 5'),
-                'pagos_recientes' => $this->query('SELECT * FROM pagos ORDER BY id DESC LIMIT 5'),
-                'avisos' => $this->query('SELECT * FROM comunicacion ORDER BY id DESC LIMIT 3'),
+                'proximos_horarios' => array_slice($this->list('horarios'), 0, 5),
+                'pagos_recientes' => array_slice($this->list('pagos'), 0, 5),
+                'avisos' => array_slice($this->list('comunicacion'), 0, 3),
             ];
         } catch (Throwable) {
             return SampleData::dashboard($this->fallback);
@@ -178,19 +148,19 @@ final class Repository
         try {
             return [
                 'finanzas' => [
-                    'cobrado' => (float) $this->scalar("SELECT COALESCE(SUM(monto), 0) FROM pagos WHERE estado = 'pagado'"),
-                    'pendiente' => (float) $this->scalar("SELECT COALESCE(SUM(monto), 0) FROM pagos WHERE estado IN ('pendiente', 'vencido')"),
-                    'pagos_vencidos' => (int) $this->scalar("SELECT COUNT(*) FROM pagos WHERE estado = 'vencido'"),
+                    'cobrado' => (float) $this->scalar("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status = 'paid'"),
+                    'pendiente' => (float) $this->scalar("SELECT COALESCE(SUM(amount), 0) FROM payments WHERE status IN ('pending', 'overdue')"),
+                    'pagos_vencidos' => (int) $this->scalar("SELECT COUNT(*) FROM payments WHERE status = 'overdue'"),
                 ],
                 'academia' => [
-                    'alumnos_total' => (int) $this->scalar('SELECT COUNT(*) FROM alumnos'),
-                    'alumnos_activos' => (int) $this->scalar("SELECT COUNT(*) FROM alumnos WHERE estado = 'activo'"),
-                    'grupos_total' => (int) $this->scalar('SELECT COUNT(*) FROM grupos'),
+                    'alumnos_total' => (int) $this->scalar('SELECT COUNT(*) FROM students'),
+                    'alumnos_activos' => (int) $this->scalar("SELECT COUNT(*) FROM students WHERE status = 'active'"),
+                    'grupos_total' => (int) $this->scalar('SELECT COUNT(*) FROM sport_groups'),
                 ],
                 'asistencia' => [
-                    'registros' => (int) $this->scalar('SELECT COUNT(*) FROM asistencia'),
-                    'presentes' => (int) $this->scalar("SELECT COUNT(*) FROM asistencia WHERE estado = 'presente'"),
-                    'ausentes' => (int) $this->scalar("SELECT COUNT(*) FROM asistencia WHERE estado = 'ausente'"),
+                    'registros' => (int) $this->scalar('SELECT COUNT(*) FROM attendance'),
+                    'presentes' => (int) $this->scalar("SELECT COUNT(*) FROM attendance WHERE status = 'present'"),
+                    'ausentes' => (int) $this->scalar("SELECT COUNT(*) FROM attendance WHERE status = 'absent'"),
                 ],
             ];
         } catch (Throwable) {
@@ -212,11 +182,35 @@ final class Repository
         return self::TABLES[$resource];
     }
 
-    private function onlyWritable(string $resource, array $payload): array
+    private function toDatabasePayload(string $resource, array $payload): array
     {
-        $allowed = self::WRITABLE_FIELDS[$resource] ?? [];
-
-        return array_intersect_key($payload, array_flip($allowed));
+        return match ($resource) {
+            'alumnos' => array_filter([
+                'first_name' => $payload['first_name'] ?? $this->firstName($payload['nombre'] ?? ''),
+                'last_name' => $payload['last_name'] ?? $this->lastName($payload['nombre'] ?? ''),
+                'birth_date' => $payload['birth_date'] ?? $payload['fecha_nacimiento'] ?? date('Y-m-d', strtotime('-10 years')),
+                'status' => $this->statusToDb($payload['estado'] ?? 'activo'),
+                'joined_at' => $payload['joined_at'] ?? $payload['fecha_inscripcion'] ?? date('Y-m-d'),
+                'phone' => $payload['phone'] ?? $payload['telefono'] ?? null,
+                'email' => $payload['email'] ?? null,
+            ], fn ($value) => $value !== null && $value !== ''),
+            'grupos' => array_filter([
+                'sport_id' => $payload['sport_id'] ?? 1,
+                'name' => $payload['name'] ?? $payload['nombre'] ?? '',
+                'level' => $payload['level'] ?? 'beginner',
+                'capacity' => $payload['capacity'] ?? $payload['capacidad'] ?? 20,
+                'monthly_fee' => $payload['monthly_fee'] ?? $payload['costo'] ?? 0,
+                'status' => $this->statusToDb($payload['estado'] ?? 'activo'),
+            ], fn ($value) => $value !== null && $value !== ''),
+            'horarios' => array_filter([
+                'group_id' => $payload['group_id'] ?? $payload['grupo_id'] ?? null,
+                'day_of_week' => $payload['day_of_week'] ?? $payload['dia_semana'] ?? 1,
+                'start_time' => $payload['start_time'] ?? $payload['hora_inicio'] ?? null,
+                'end_time' => $payload['end_time'] ?? $payload['hora_fin'] ?? null,
+                'location' => $payload['location'] ?? $payload['lugar'] ?? null,
+            ], fn ($value) => $value !== null && $value !== ''),
+            default => [],
+        };
     }
 
     private function allowedFilters(string $resource): array
@@ -229,6 +223,45 @@ final class Repository
             'pagos' => ['alumno_id', 'estado'],
             'comunicacion' => ['grupo_id', 'canal', 'estado'],
             default => [],
+        };
+    }
+
+    private function listSql(string $resource): string
+    {
+        return match ($resource) {
+            'alumnos' => "SELECT s.id, CONCAT(s.first_name, ' ', s.last_name) AS nombre, TIMESTAMPDIFF(YEAR, s.birth_date, CURDATE()) AS edad, CASE s.status WHEN 'active' THEN 'Activo' WHEN 'waiting_list' THEN 'Pausa' ELSE 'Inactivo' END AS estado, COALESCE(sg.name, 'Sin grupo') AS grupo, COALESCE(vsb.outstanding_amount, 0) AS adeudo, CASE WHEN COALESCE(vsb.outstanding_amount, 0) > 0 THEN 'Pendiente' ELSE 'Al corriente' END AS pago, 90 AS asistencia FROM students s LEFT JOIN student_groups stg ON stg.student_id = s.id AND stg.status = 'active' LEFT JOIN sport_groups sg ON sg.id = stg.group_id LEFT JOIN v_student_balance vsb ON vsb.student_id = s.id ORDER BY s.id DESC",
+            'grupos' => "SELECT sg.id, sg.name AS nombre, sp.name AS disciplina, sg.level AS nivel, COALESCE(u.name, 'Sin entrenador') AS entrenador, sg.capacity AS cupo, COUNT(CASE WHEN stg.status = 'active' THEN 1 END) AS alumnos, sg.monthly_fee AS costo, sg.status AS estado FROM sport_groups sg JOIN sports sp ON sp.id = sg.sport_id LEFT JOIN users u ON u.id = sg.coach_user_id LEFT JOIN student_groups stg ON stg.group_id = sg.id GROUP BY sg.id, sg.name, sp.name, sg.level, u.name, sg.capacity, sg.monthly_fee, sg.status ORDER BY sg.id DESC",
+            'horarios' => "SELECT sc.id, sg.name AS grupo, CASE sc.day_of_week WHEN 1 THEN 'Lunes' WHEN 2 THEN 'Martes' WHEN 3 THEN 'Miercoles' WHEN 4 THEN 'Jueves' WHEN 5 THEN 'Viernes' WHEN 6 THEN 'Sabado' ELSE 'Domingo' END AS dia, TIME_FORMAT(sc.start_time, '%H:%i') AS hora, TIME_FORMAT(sc.start_time, '%H:%i') AS hora_inicio, TIME_FORMAT(sc.end_time, '%H:%i') AS hora_fin, sc.location AS sede, sc.location AS lugar, COALESCE(u.name, 'Sin entrenador') AS entrenador FROM schedules sc JOIN sport_groups sg ON sg.id = sc.group_id LEFT JOIN users u ON u.id = sg.coach_user_id ORDER BY sc.day_of_week, sc.start_time",
+            'asistencia' => "SELECT a.id, a.student_id AS alumno_id, CONCAT(s.first_name, ' ', s.last_name) AS alumno, c.group_id AS grupo_id, c.class_date AS fecha, CASE a.status WHEN 'present' THEN 'presente' WHEN 'absent' THEN 'ausente' WHEN 'late' THEN 'retardo' ELSE 'justificado' END AS estado, a.notes AS observaciones FROM attendance a JOIN students s ON s.id = a.student_id JOIN classes c ON c.id = a.class_id ORDER BY c.class_date DESC, a.id DESC",
+            'pagos' => "SELECT p.id, p.student_id AS alumno_id, CONCAT(s.first_name, ' ', s.last_name) AS alumno, p.concept AS concepto, p.amount AS monto, p.due_date AS fecha_vencimiento, p.paid_at AS fecha_pago, CASE p.status WHEN 'paid' THEN 'Pagado' WHEN 'overdue' THEN 'Vencido' WHEN 'cancelled' THEN 'Cancelado' ELSE 'Pendiente' END AS estado FROM payments p JOIN students s ON s.id = p.student_id ORDER BY p.due_date DESC, p.id DESC",
+            'comunicacion' => "SELECT m.id, COALESCE(m.subject, 'Aviso') AS titulo, m.body AS mensaje, m.channel AS canal, m.group_id, COALESCE(sg.name, m.recipient) AS destino, m.recipient AS enviado_a, m.sent_at AS fecha_envio, CASE m.status WHEN 'sent' THEN 'Enviado' WHEN 'draft' THEN 'Borrador' WHEN 'failed' THEN 'Fallido' ELSE 'Programado' END AS estado FROM messages m LEFT JOIN sport_groups sg ON sg.id = m.group_id ORDER BY m.created_at DESC",
+            default => throw new InvalidArgumentException('Recurso no soportado'),
+        };
+    }
+
+    private function findSql(string $resource): string
+    {
+        return 'SELECT * FROM (' . $this->listSql($resource) . ') api_resource WHERE id = :id LIMIT 1';
+    }
+
+    private function firstName(string $name): string
+    {
+        $parts = preg_split('/\s+/', trim($name)) ?: [];
+        return $parts[0] ?? 'Alumno';
+    }
+
+    private function lastName(string $name): string
+    {
+        $parts = preg_split('/\s+/', trim($name)) ?: [];
+        return count($parts) > 1 ? implode(' ', array_slice($parts, 1)) : 'SportIk';
+    }
+
+    private function statusToDb(string $status): string
+    {
+        return match (strtolower($status)) {
+            'activo', 'active' => 'active',
+            'pausa', 'pausado', 'waiting_list' => 'waiting_list',
+            default => 'inactive',
         };
     }
 
@@ -290,13 +323,13 @@ final class Repository
     private function attendancePercentToday(): float
     {
         $today = date('Y-m-d');
-        $total = (int) $this->scalar("SELECT COUNT(*) FROM asistencia WHERE fecha = '{$today}'");
+        $total = (int) $this->scalar("SELECT COUNT(*) FROM attendance a JOIN classes c ON c.id = a.class_id WHERE c.class_date = '{$today}'");
 
         if ($total === 0) {
             return 0.0;
         }
 
-        $presentes = (int) $this->scalar("SELECT COUNT(*) FROM asistencia WHERE fecha = '{$today}' AND estado = 'presente'");
+        $presentes = (int) $this->scalar("SELECT COUNT(*) FROM attendance a JOIN classes c ON c.id = a.class_id WHERE c.class_date = '{$today}' AND a.status = 'present'");
 
         return round(($presentes / $total) * 100, 1);
     }

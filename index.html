@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#101820">
+    <title>SportIk MVP</title>
+    <link rel="stylesheet" href="assets/css/app.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navegacion principal">
+        <a class="brand" href="#dashboard" data-route="dashboard" aria-label="SportIk dashboard">
+          <span class="brand-mark">
+            <img src="logo/logo_sportik.png" alt="SportIk" onerror="this.hidden=true; this.nextElementSibling.hidden=false;">
+            <span hidden>SI</span>
+          </span>
+          <span>
+            <strong>SportIk</strong>
+            <small>Academia deportiva</small>
+          </span>
+        </a>
+
+        <nav class="nav-list">
+          <a href="#dashboard" data-route="dashboard" class="is-active">
+            <span class="nav-icon">D</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="#alumnos" data-route="alumnos">
+            <span class="nav-icon">O</span>
+            <span>Alumnos</span>
+          </a>
+          <a href="#grupos" data-route="grupos">
+            <span class="nav-icon">G</span>
+            <span>Grupos</span>
+          </a>
+          <a href="#calendario" data-route="calendario">
+            <span class="nav-icon">H</span>
+            <span>Horarios</span>
+          </a>
+          <a href="#asistencia" data-route="asistencia">
+            <span class="nav-icon">A</span>
+            <span>Asistencia</span>
+          </a>
+          <a href="#pagos" data-route="pagos">
+            <span class="nav-icon">$</span>
+            <span>Pagos</span>
+          </a>
+          <a href="#comunicacion" data-route="comunicacion">
+            <span class="nav-icon">@</span>
+            <span>Comunicacion</span>
+          </a>
+          <a href="#reportes" data-route="reportes">
+            <span class="nav-icon">R</span>
+            <span>Reportes</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-card">
+          <span>Proxima clase</span>
+          <strong id="next-class-sidebar">Cargando...</strong>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">MVP operativo</p>
+            <h1 id="view-title">Dashboard</h1>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button" type="button" id="refresh-button" aria-label="Actualizar datos">R</button>
+            <button class="primary-action" type="button" id="quick-action">Nuevo alumno</button>
+          </div>
+        </header>
+
+        <section class="status-strip" aria-live="polite">
+          <span class="status-dot" id="api-dot"></span>
+          <span id="api-status">Conectando con API...</span>
+        </section>
+
+        <section id="app-view" class="view" tabindex="-1"></section>
+      </main>
+    </div>
+
+    <script src="assets/js/app.js" defer></script>
+  </body>
+</html>
