@@ -112,6 +112,10 @@ const logoutButton = document.querySelector("#logout-button");
 const userChip = document.querySelector("#user-chip");
 const userName = document.querySelector("#user-name");
 const userRole = document.querySelector("#user-role");
+const modalBackdrop = document.querySelector("#modal-backdrop");
+const modalTitle = document.querySelector("#modal-title");
+const modalBody = document.querySelector("#modal-body");
+const modalClose = document.querySelector("#modal-close");
 
 function money(value) {
   return new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 }).format(Number(value || 0));
@@ -146,6 +150,11 @@ function applyPermissions() {
     const route = link.dataset.route;
     link.hidden = Boolean(currentUser) && !canAccess(route);
   });
+
+  document.querySelectorAll(".nav-group").forEach((group) => {
+    const visibleLinks = [...group.querySelectorAll("[data-route]")].filter((link) => !link.hidden);
+    group.hidden = Boolean(currentUser) && visibleLinks.length === 0;
+  });
 }
 
 async function apiRequest(url, options = {}) {
@@ -159,7 +168,7 @@ async function apiRequest(url, options = {}) {
   });
   const payload = await response.json().catch(() => null);
 
-  if (response.status === 401 && !url.includes("auth.php?action=login")) {
+  if (response.status === 401 && !url.toLowerCase().includes("auth.php?action=login")) {
     currentUser = null;
     showLogin();
   }
@@ -387,6 +396,36 @@ function normalizeSettings(settings) {
   };
 }
 
+const formSchemas = {
+  alumnos: [
+    ["nombre", "Nombre completo"],
+    ["edad", "Edad", "number"],
+    ["grupo_id", "Grupo"],
+    ["telefono", "Telefono tutor"],
+    ["email", "Email tutor", "email"],
+    ["medical_notes", "Observaciones medicas"]
+  ],
+  grupos: [["nombre", "Nombre"], ["deporte_id", "Deporte"], ["nivel", "Nivel"], ["capacidad", "Cupo", "number"], ["costo", "Mensualidad", "number"]],
+  deportes: [["nombre", "Nombre"], ["descripcion", "Descripcion"], ["estado", "Estado"]],
+  calendario: [["grupo_id", "Grupo"], ["dia_semana", "Dia de semana", "number"], ["hora_inicio", "Hora inicio", "time"], ["hora_fin", "Hora fin", "time"], ["lugar", "Lugar"]],
+  asistencia: [["clase_id", "Clase"], ["alumno_id", "Alumno"], ["estado", "Estado"], ["observaciones", "Observaciones"]],
+  pagos: [["alumno_id", "Alumno"], ["concepto", "Concepto"], ["monto", "Monto", "number"], ["fecha_vencimiento", "Vencimiento", "date"], ["estado", "Estado"]],
+  caja: [["monto_inicial", "Monto inicial", "number"], ["monto_contado", "Monto contado", "number"], ["observaciones", "Observaciones"]],
+  entrenadores: [["nombre", "Nombre"], ["deporte_id", "Deporte"], ["telefono", "Telefono"], ["email", "Email", "email"], ["certificacion", "Certificacion"]],
+  evaluaciones: [["alumno_id", "Alumno"], ["grupo_id", "Grupo"], ["puntaje_tecnico", "Tecnica", "number"], ["puntaje_fisico", "Fisico", "number"], ["puntaje_actitud", "Disciplina", "number"], ["observaciones", "Comentarios"]],
+  eventos: [["nombre", "Nombre"], ["tipo_evento", "Tipo"], ["inicio", "Inicio", "datetime-local"], ["lugar", "Lugar"], ["precio", "Costo", "number"]],
+  inventario: [["nombre", "Producto"], ["categoria", "Categoria"], ["existencia", "Stock", "number"], ["stock_minimo", "Stock minimo", "number"], ["precio_venta", "Precio venta", "number"]],
+  comunicacion: [["titulo", "Titulo"], ["canal", "Canal"], ["destinatario", "Destinatario"], ["mensaje", "Mensaje"]],
+  configuracion: [["clave", "Clave"], ["valor", "Valor"], ["grupo", "Grupo"], ["descripcion", "Descripcion"]]
+};
+
+const resourceForRoute = {
+  calendario: "horarios",
+  caja: "caja",
+  inventario: "productos",
+  configuracion: "academia"
+};
+
 async function fetchResource(resource) {
   return apiRequest(`api/${resource}.php`);
 }
@@ -445,7 +484,11 @@ function getStats() {
   const pendingPayments = appData.pagos.filter((payment) => payment.estado !== "Pagado");
   const revenue = appData.pagos.filter((payment) => payment.estado === "Pagado").reduce((sum, payment) => sum + payment.monto, 0);
   const avgAttendance = appData.alumnos.length ? Math.round(appData.alumnos.reduce((sum, student) => sum + student.asistencia, 0) / appData.alumnos.length) : 0;
-  return { activeStudents, pendingPayments: pendingPayments.length, revenue, avgAttendance };
+  const overdue = appData.pagos.filter((payment) => payment.estado === "Vencido").length;
+  const lowStock = appData.inventario.filter((item) => item.estado === "Bajo" || item.stock <= item.minimo).length;
+  const occupancy = appData.grupos.length ? Math.round(appData.grupos.reduce((sum, group) => sum + percent(group.alumnos, group.cupo), 0) / appData.grupos.length) : 0;
+  const retention = appData.alumnos.length ? Math.round((activeStudents / appData.alumnos.length) * 100) : 0;
+  return { activeStudents, pendingPayments: pendingPayments.length, revenue, avgAttendance, overdue, lowStock, occupancy, retention };
 }
 
 function renderKpis() {
@@ -461,9 +504,18 @@ function renderKpis() {
 }
 
 function renderDashboard() {
+  const stats = getStats();
+  const nextEvents = appData.eventos.slice(0, 3);
+  const birthdays = appData.alumnos.slice(0, 3);
+  const recentStudents = [...appData.alumnos].slice(-3).reverse();
   return `
     ${renderKpis()}
-    <div class="two-column">
+    <div class="three-column">
+      <article class="metric-card"><span class="meta">Pagos vencidos</span><strong>${stats.overdue}</strong><span class="badge ${stats.overdue ? "is-danger" : ""}">Finanzas</span></article>
+      <article class="metric-card"><span class="meta">Ocupacion promedio</span><strong>${stats.occupancy}%</strong><span class="badge">Grupos</span></article>
+      <article class="metric-card"><span class="meta">Retencion activa</span><strong>${stats.retention}%</strong><span class="badge">Alumnos</span></article>
+    </div>
+    <div class="dashboard-band two-column">
       <section class="panel">
         <div class="panel-header">
           <h2>Agenda inmediata</h2>
@@ -476,8 +528,22 @@ function renderDashboard() {
         <div class="list">
           <div class="message-item"><div class="row"><strong>Pagos por revisar</strong><span class="badge is-warning">${getStats().pendingPayments}</span></div><p class="meta">Seguimiento sugerido a tutores con saldo pendiente.</p></div>
           <div class="message-item"><div class="row"><strong>Cupo alto</strong><span class="badge">${mostFullGroup().nombre}</span></div><p class="meta">${mostFullGroup().alumnos} de ${mostFullGroup().cupo} lugares ocupados.</p></div>
-          <div class="message-item"><div class="row"><strong>Inventario bajo</strong><span class="badge is-danger">${appData.inventario.filter((item) => item.estado === "Bajo").length}</span></div><p class="meta">Articulos por reponer antes de proximas clases.</p></div>
+          <div class="message-item"><div class="row"><strong>Inventario bajo</strong><span class="badge is-danger">${stats.lowStock}</span></div><p class="meta">Articulos por reponer antes de proximas clases.</p></div>
         </div>
+      </section>
+    </div>
+    <div class="three-column">
+      <section class="panel">
+        <div class="panel-header"><h2>Proximos eventos</h2></div>
+        <div class="insight-grid">${nextEvents.map((event) => `<div class="insight-item"><strong>${event.nombre}</strong><span class="meta">${event.fecha} - ${event.sede}</span></div>`).join("")}</div>
+      </section>
+      <section class="panel">
+        <div class="panel-header"><h2>Cumpleanos proximos</h2></div>
+        <div class="insight-grid">${birthdays.map((student) => `<div class="insight-item"><strong>${student.nombre}</strong><span class="meta">${student.grupo} - ${student.edad} anos</span></div>`).join("")}</div>
+      </section>
+      <section class="panel">
+        <div class="panel-header"><h2>Nuevos inscritos</h2></div>
+        <div class="insight-grid">${recentStudents.map((student) => `<div class="insight-item"><strong>${student.nombre}</strong><span class="meta">${student.estado} - ${student.pago}</span></div>`).join("")}</div>
       </section>
     </div>
   `;
@@ -506,7 +572,7 @@ function renderStudents() {
 function studentCards(students) {
   if (!students.length) return `<div class="empty-state">Sin alumnos con ese filtro.</div>`;
   return students.map((student) => `
-    <article class="student-card">
+    <button class="student-card" type="button" data-preview-student="${student.id || student.nombre}">
       <div class="row">
         <div class="row-start truncate">
           <span class="avatar">${initials(student.nombre)}</span>
@@ -519,7 +585,7 @@ function studentCards(students) {
       </div>
       <p class="meta">Asistencia ${student.asistencia}% - Pago ${student.pago}</p>
       <div class="progress"><span style="width:${student.asistencia}%"></span></div>
-    </article>
+    </button>
   `).join("");
 }
 
@@ -536,6 +602,7 @@ function renderGroups() {
           <p class="meta">${group.entrenador} - ${group.sede}</p>
           <p class="meta">${group.dias} - ${group.hora} - ${money(group.costo)}</p>
           <div class="progress"><span style="width:${percent(group.alumnos, group.cupo)}%"></span></div>
+          <div class="actions-row"><button class="mini-action" type="button" data-edit-route="grupos" data-edit-id="${group.id || group.nombre}">Editar</button></div>
         </article>
       `).join("")}
     </section>
@@ -554,7 +621,7 @@ function renderSports() {
           <p class="meta">${sport.grupos} grupos - ${sport.alumnos} alumnos</p>
           <p class="meta">Niveles: ${sport.niveles}</p>
           <div class="actions-row">
-            <button class="mini-action" type="button">Editar</button>
+            <button class="mini-action" type="button" data-edit-route="deportes" data-edit-id="${sport.id || sport.nombre}">Editar</button>
             <button class="mini-action" type="button">Ver grupos</button>
           </div>
         </article>
@@ -568,7 +635,7 @@ function renderSchedule() {
     <section class="panel">
       <div class="panel-header">
         <h2>Calendario semanal</h2>
-        <button class="secondary-action" type="button">Agregar clase</button>
+        <button class="secondary-action" type="button" data-open-form="calendario">Agregar clase</button>
       </div>
       ${renderScheduleList(appData.horarios)}
     </section>
@@ -593,14 +660,22 @@ function renderScheduleList(items) {
 }
 
 function renderAttendance() {
+  const selectedClass = sessionStorage.getItem("sportik_attendance_class") || appData.horarios[0]?.grupo || "todos";
+  const visibleStudents = selectedClass === "todos" ? appData.alumnos : appData.alumnos.filter((student) => student.grupo === selectedClass);
   return `
     <section class="panel">
       <div class="panel-header">
         <h2>Lista de hoy</h2>
-        <span class="badge">Futbol Sub-12</span>
+        <div class="panel-header-actions">
+          <select class="select" id="attendance-class">
+            <option value="todos">Todas las clases</option>
+            ${appData.horarios.map((item) => `<option value="${item.grupo}" ${item.grupo === selectedClass ? "selected" : ""}>${item.grupo} - ${item.dia} ${item.hora}</option>`).join("")}
+          </select>
+          <button class="secondary-action" type="button" data-open-form="asistencia">Registrar asistencia</button>
+        </div>
       </div>
       <div class="attendance-grid">
-        ${appData.alumnos.map((student) => `
+        ${visibleStudents.map((student) => `
           <article class="attendance-row">
             <div class="row-start truncate">
               <span class="avatar">${initials(student.nombre)}</span>
@@ -614,7 +689,7 @@ function renderAttendance() {
               <button class="toggle" type="button">Falta</button>
             </div>
           </article>
-        `).join("")}
+        `).join("") || `<div class="empty-state">No hay alumnos para la clase seleccionada.</div>`}
       </div>
     </section>
   `;
@@ -637,6 +712,7 @@ function renderPayments() {
             <div class="row-start">
               <strong>${money(payment.monto)}</strong>
               <span class="badge ${statusClass(payment.estado)}">${payment.estado}</span>
+              <button class="mini-action" type="button" data-edit-route="pagos" data-edit-id="${payment.id || payment.alumno}">Editar</button>
             </div>
           </article>
         `).join("")}
@@ -656,7 +732,7 @@ function renderCash() {
     </div>
     <div class="two-column">
       <section class="panel">
-        <div class="panel-header"><h2>Movimientos recientes</h2><button class="secondary-action" type="button">Nuevo movimiento</button></div>
+        <div class="panel-header"><h2>Movimientos recientes</h2><button class="secondary-action" type="button" data-open-form="caja">Nuevo movimiento</button></div>
         <div class="table-wrap">
           <table class="data-table">
             <thead><tr><th>Hora</th><th>Concepto</th><th>Tipo</th><th>Metodo</th><th>Monto</th></tr></thead>
@@ -665,7 +741,7 @@ function renderCash() {
         </div>
       </section>
       <section class="panel">
-        <div class="panel-header"><h2>Cortes</h2><button class="secondary-action" type="button">Cerrar corte</button></div>
+        <div class="panel-header"><h2>Cortes</h2><button class="secondary-action" type="button" data-open-form="caja">Cerrar corte</button></div>
         <div class="detail-grid">
           ${appData.caja.cortes.map((cut) => `<div class="detail-row"><span><strong>${cut.fecha}</strong><br><span class="meta">${cut.responsable}</span></span><span><strong>${money(cut.ingresos - cut.egresos)}</strong><br><span class="badge ${cut.estado === "Abierto" ? "is-warning" : ""}">${cut.estado}</span></span></div>`).join("")}
         </div>
@@ -677,7 +753,7 @@ function renderCash() {
 function renderCoaches() {
   return `
     <section class="panel">
-      <div class="panel-header"><h2>Plantilla tecnica</h2><button class="secondary-action" type="button">Nuevo entrenador</button></div>
+      <div class="panel-header"><h2>Plantilla tecnica</h2><button class="secondary-action" type="button" data-open-form="entrenadores">Nuevo entrenador</button></div>
       <div class="table-wrap">
         <table class="data-table">
           <thead><tr><th>Entrenador</th><th>Disciplinas</th><th>Grupos</th><th>Alumnos</th><th>Sesiones</th><th>Estado</th><th>Acciones</th></tr></thead>
@@ -690,7 +766,7 @@ function renderCoaches() {
                 <td>${coach.alumnos}</td>
                 <td>${coach.sesiones}</td>
                 <td><span class="badge">${coach.estado}</span></td>
-                <td><button class="mini-action" type="button">Agenda</button></td>
+                <td><button class="mini-action" type="button" data-edit-route="entrenadores" data-edit-id="${coach.id || coach.nombre}">Editar</button></td>
               </tr>
             `).join("")}
           </tbody>
@@ -703,10 +779,10 @@ function renderCoaches() {
 function renderEvaluations() {
   return `
     <section class="panel">
-      <div class="panel-header"><h2>Evaluaciones por alumno</h2><button class="secondary-action" type="button">Nueva evaluacion</button></div>
+      <div class="panel-header"><h2>Evaluaciones por alumno</h2><button class="secondary-action" type="button" data-open-form="evaluaciones">Nueva evaluacion</button></div>
       <div class="table-wrap">
         <table class="data-table">
-          <thead><tr><th>Alumno</th><th>Grupo</th><th>Fecha</th><th>Tecnica</th><th>Fisico</th><th>Disciplina</th><th>Estado</th></tr></thead>
+          <thead><tr><th>Alumno</th><th>Grupo</th><th>Fecha</th><th>Tecnica</th><th>Fisico</th><th>Disciplina</th><th>Estado</th><th>Acciones</th></tr></thead>
           <tbody>
             ${appData.evaluaciones.map((evaluation) => `
               <tr>
@@ -717,6 +793,7 @@ function renderEvaluations() {
                 <td>${scoreCell(evaluation.fisico)}</td>
                 <td>${scoreCell(evaluation.disciplina)}</td>
                 <td><span class="badge ${evaluation.estado === "Programada" ? "is-info" : ""}">${evaluation.estado}</span></td>
+                <td><button class="mini-action" type="button" data-edit-route="evaluaciones" data-edit-id="${evaluation.id || evaluation.alumno}">Editar</button></td>
               </tr>
             `).join("")}
           </tbody>
@@ -738,7 +815,7 @@ function renderEvents() {
           <p class="meta">${event.fecha} - ${event.sede}</p>
           <p class="meta">${event.inscritos} inscritos - ${event.estado}</p>
           <div class="actions-row">
-            <button class="mini-action" type="button">Inscribir</button>
+            <button class="mini-action" type="button" data-edit-route="eventos" data-edit-id="${event.id || event.nombre}">Editar</button>
             <button class="mini-action" type="button">Fixture</button>
           </div>
         </article>
@@ -750,7 +827,7 @@ function renderEvents() {
 function renderInventory() {
   return `
     <section class="panel">
-      <div class="panel-header"><h2>Existencias</h2><button class="secondary-action" type="button">Registrar entrada</button></div>
+      <div class="panel-header"><h2>Existencias</h2><button class="secondary-action" type="button" data-open-form="inventario">Registrar entrada</button></div>
       <div class="table-wrap">
         <table class="data-table">
           <thead><tr><th>Articulo</th><th>Categoria</th><th>Stock</th><th>Minimo</th><th>Ubicacion</th><th>Estado</th><th>Acciones</th></tr></thead>
@@ -763,7 +840,7 @@ function renderInventory() {
                 <td>${item.minimo}</td>
                 <td>${item.ubicacion}</td>
                 <td><span class="badge ${item.estado === "Bajo" ? "is-danger" : ""}">${item.estado}</span></td>
-                <td><button class="mini-action" type="button">Ajustar</button></td>
+                <td><button class="mini-action" type="button" data-edit-route="inventario" data-edit-id="${item.id || item.articulo}">Editar</button></td>
               </tr>
             `).join("")}
           </tbody>
@@ -778,7 +855,7 @@ function renderCommunication() {
     <section class="panel">
       <div class="panel-header">
         <h2>Mensajes a tutores</h2>
-        <button class="secondary-action" type="button">Nuevo mensaje</button>
+        <button class="secondary-action" type="button" data-open-form="comunicacion">Nuevo mensaje</button>
       </div>
       <div class="list">
         ${appData.mensajes.map((message) => `
@@ -826,7 +903,7 @@ function renderSettings() {
   return `
     <div class="two-column">
       <section class="panel">
-        <div class="panel-header"><h2>Academia</h2><button class="secondary-action" type="button">Guardar</button></div>
+        <div class="panel-header"><h2>Academia</h2><button class="secondary-action" type="button" data-open-form="configuracion">Guardar</button></div>
         <div class="detail-grid">
           <label class="detail-row"><span>Nombre</span><input class="input" value="${settings.academia}"></label>
           <label class="detail-row"><span>Moneda</span><input class="input" value="${settings.moneda}"></label>
@@ -835,7 +912,7 @@ function renderSettings() {
         </div>
       </section>
       <section class="panel">
-        <div class="panel-header"><h2>Operacion</h2><button class="secondary-action" type="button">Agregar sede</button></div>
+        <div class="panel-header"><h2>Operacion</h2><button class="secondary-action" type="button" data-open-form="configuracion">Agregar sede</button></div>
         <div class="detail-grid">
           <div class="detail-row"><span>Canales</span><strong>${settings.canales.join(", ")}</strong></div>
           ${settings.sedes.map((site) => `<div class="detail-row"><span>${site}</span><button class="mini-action" type="button">Editar</button></div>`).join("")}
@@ -858,6 +935,88 @@ function statusClass(status) {
 
 function mostFullGroup() {
   return [...appData.grupos].sort((a, b) => (b.alumnos / b.cupo) - (a.alumnos / a.cupo))[0] || { nombre: "Sin grupos", alumnos: 0, cupo: 0 };
+}
+
+function openModal(titleText, content) {
+  modalTitle.textContent = titleText;
+  modalBody.innerHTML = content;
+  modalBackdrop.hidden = false;
+}
+
+function closeModal() {
+  modalBackdrop.hidden = true;
+  modalBody.innerHTML = "";
+}
+
+function routeItems(route) {
+  return {
+    alumnos: appData.alumnos,
+    grupos: appData.grupos,
+    deportes: appData.deportes,
+    calendario: appData.horarios,
+    pagos: appData.pagos,
+    caja: appData.caja.cortes,
+    entrenadores: appData.entrenadores,
+    evaluaciones: appData.evaluaciones,
+    eventos: appData.eventos,
+    inventario: appData.inventario,
+    comunicacion: appData.mensajes
+  }[route] || [];
+}
+
+function findItem(route, id) {
+  return routeItems(route).find((item) => String(item.id || item.nombre || item.alumno || item.articulo) === String(id)) || null;
+}
+
+function openForm(route = currentRoute, item = null) {
+  const schema = formSchemas[route] || [["nombre", "Nombre"], ["estado", "Estado"]];
+  const isEdit = Boolean(item);
+  const fields = schema.map(([name, label, type = "text"]) => {
+    const value = item?.[name] || item?.[label.toLowerCase()] || "";
+    return `
+      <label>
+        <span class="label">${label}</span>
+        <input class="input" name="${name}" type="${type}" value="${String(value).replaceAll('"', "&quot;")}">
+      </label>
+    `;
+  }).join("");
+
+  openModal(`${isEdit ? "Editar" : "Nuevo"} ${routes[route] || "registro"}`, `
+    <form class="form-grid" id="module-form" data-form-route="${route}" data-form-id="${item?.id || ""}">
+      ${fields}
+      <div class="form-actions">
+        <button class="secondary-action" type="button" data-close-modal>Cancelar</button>
+        <button class="primary-action" type="submit">${isEdit ? "Guardar cambios" : "Crear registro"}</button>
+      </div>
+    </form>
+  `);
+}
+
+function openStudentPreview(student) {
+  openModal(student.nombre, `
+    <div class="preview-head">
+      <span class="avatar">${initials(student.nombre)}</span>
+      <div>
+        <p class="eyebrow">Preview alumno</p>
+        <h2>${student.nombre}</h2>
+        <p class="meta">${student.edad} anos - ${student.grupo}</p>
+      </div>
+    </div>
+    <div class="three-column">
+      <article class="metric-card"><span class="meta">Estado</span><strong>${student.estado}</strong><span class="badge">${student.pago}</span></article>
+      <article class="metric-card"><span class="meta">Asistencia</span><strong>${student.asistencia}%</strong><span class="badge">Ultimas clases</span></article>
+      <article class="metric-card"><span class="meta">Adeudo</span><strong>${money(student.adeudo || 0)}</strong><span class="badge ${student.pago === "Pendiente" ? "is-warning" : ""}">Pagos</span></article>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-row"><span>Tutor</span><strong>${student.telefono_tutor || student.telefono || "Sin capturar"}</strong></div>
+      <div class="detail-row"><span>Email</span><strong>${student.email_tutor || student.email || "Sin capturar"}</strong></div>
+      <div class="detail-row"><span>Observaciones medicas</span><strong>${student.medical_notes || student.observaciones || "Sin observaciones"}</strong></div>
+    </div>
+    <div class="form-actions">
+      <button class="secondary-action" type="button" data-close-modal>Cerrar</button>
+      <button class="primary-action" type="button" data-edit-route="alumnos" data-edit-id="${student.id || student.nombre}">Editar alumno</button>
+    </div>
+  `);
 }
 
 function bindViewEvents() {
@@ -893,6 +1052,33 @@ function bindViewEvents() {
       event.target.classList.add("is-selected");
     });
   });
+
+  document.querySelectorAll("[data-open-form]").forEach((button) => {
+    button.addEventListener("click", () => openForm(button.dataset.openForm));
+  });
+
+  document.querySelectorAll("[data-edit-route]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const route = button.dataset.editRoute;
+      openForm(route, findItem(route, button.dataset.editId));
+    });
+  });
+
+  document.querySelectorAll("[data-preview-student]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const student = findItem("alumnos", button.dataset.previewStudent);
+      if (student) openStudentPreview(student);
+    });
+  });
+
+  const attendanceClass = document.querySelector("#attendance-class");
+  if (attendanceClass) {
+    attendanceClass.addEventListener("change", () => {
+      sessionStorage.setItem("sportik_attendance_class", attendanceClass.value);
+      render();
+    });
+  }
 }
 
 function showLogin(message = "") {
@@ -1022,6 +1208,38 @@ document.querySelectorAll("[data-route]").forEach((link) => {
 });
 
 refreshButton.addEventListener("click", loadData);
+quickAction.addEventListener("click", () => openForm(currentRoute));
+modalClose.addEventListener("click", closeModal);
+modalBackdrop.addEventListener("click", (event) => {
+  if (event.target === modalBackdrop || event.target.closest("[data-close-modal]")) {
+    closeModal();
+  }
+});
+modalBody.addEventListener("submit", async (event) => {
+  if (event.target.id !== "module-form") return;
+  event.preventDefault();
+  const form = event.target;
+  const route = form.dataset.formRoute;
+  const id = form.dataset.formId;
+  const payload = Object.fromEntries(new FormData(form).entries());
+  const resource = resourceForRoute[route] || route;
+  const url = id ? `api/${resource}.php?id=${encodeURIComponent(id)}` : `api/${resource}.php`;
+
+  try {
+    await apiRequest(url, {
+      method: id ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    closeModal();
+    await loadData();
+  } catch (error) {
+    openModal("No se pudo guardar", `
+      <p class="login-error">${error.message}</p>
+      <div class="form-actions"><button class="primary-action" type="button" data-close-modal>Entendido</button></div>
+    `);
+  }
+});
 logoutButton.addEventListener("click", async () => {
   try {
     await apiRequest("api/Auth.php?action=logout", { method: "POST" });

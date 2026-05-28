@@ -21,67 +21,38 @@
           </span>
         </a>
 
-        <nav class="nav-list">
-          <a href="#dashboard" data-route="dashboard" class="is-active">
-            <span class="nav-icon">D</span>
-            <span>Dashboard</span>
-          </a>
-          <a href="#alumnos" data-route="alumnos">
-            <span class="nav-icon">O</span>
-            <span>Alumnos</span>
-          </a>
-          <a href="#grupos" data-route="grupos">
-            <span class="nav-icon">G</span>
-            <span>Grupos</span>
-          </a>
-          <a href="#deportes" data-route="deportes">
-            <span class="nav-icon">S</span>
-            <span>Deportes</span>
-          </a>
-          <a href="#calendario" data-route="calendario">
-            <span class="nav-icon">H</span>
-            <span>Horarios</span>
-          </a>
-          <a href="#asistencia" data-route="asistencia">
-            <span class="nav-icon">A</span>
-            <span>Asistencia</span>
-          </a>
-          <a href="#pagos" data-route="pagos">
-            <span class="nav-icon">$</span>
-            <span>Pagos</span>
-          </a>
-          <a href="#caja" data-route="caja">
-            <span class="nav-icon">C</span>
-            <span>Caja</span>
-          </a>
-          <a href="#entrenadores" data-route="entrenadores">
-            <span class="nav-icon">E</span>
-            <span>Entrenadores</span>
-          </a>
-          <a href="#evaluaciones" data-route="evaluaciones">
-            <span class="nav-icon">V</span>
-            <span>Evaluaciones</span>
-          </a>
-          <a href="#eventos" data-route="eventos">
-            <span class="nav-icon">T</span>
-            <span>Eventos</span>
-          </a>
-          <a href="#inventario" data-route="inventario">
-            <span class="nav-icon">I</span>
-            <span>Inventario</span>
-          </a>
-          <a href="#comunicacion" data-route="comunicacion">
-            <span class="nav-icon">@</span>
-            <span>Comunicacion</span>
-          </a>
-          <a href="#reportes" data-route="reportes">
-            <span class="nav-icon">R</span>
-            <span>Reportes</span>
-          </a>
-          <a href="#configuracion" data-route="configuracion">
-            <span class="nav-icon">K</span>
-            <span>Configuracion</span>
-          </a>
+        <nav class="nav-list" id="main-nav">
+          <a href="#dashboard" data-route="dashboard" class="is-active"><span class="nav-icon">D</span><span>Dashboard</span></a>
+
+          <details class="nav-group" open>
+            <summary>Academia</summary>
+            <a href="#alumnos" data-route="alumnos"><span class="nav-icon">O</span><span>Alumnos</span></a>
+            <a href="#grupos" data-route="grupos"><span class="nav-icon">G</span><span>Grupos</span></a>
+            <a href="#deportes" data-route="deportes"><span class="nav-icon">S</span><span>Deportes</span></a>
+            <a href="#calendario" data-route="calendario"><span class="nav-icon">H</span><span>Horarios</span></a>
+          </details>
+
+          <details class="nav-group" open>
+            <summary>Clases</summary>
+            <a href="#asistencia" data-route="asistencia"><span class="nav-icon">A</span><span>Asistencia</span></a>
+            <a href="#evaluaciones" data-route="evaluaciones"><span class="nav-icon">V</span><span>Evaluaciones</span></a>
+            <a href="#entrenadores" data-route="entrenadores"><span class="nav-icon">E</span><span>Entrenadores</span></a>
+          </details>
+
+          <details class="nav-group" open>
+            <summary>Administracion</summary>
+            <a href="#pagos" data-route="pagos"><span class="nav-icon">$</span><span>Pagos</span></a>
+            <a href="#caja" data-route="caja"><span class="nav-icon">C</span><span>Caja</span></a>
+            <a href="#inventario" data-route="inventario"><span class="nav-icon">I</span><span>Inventario</span></a>
+          </details>
+
+          <details class="nav-group" open>
+            <summary>Operacion</summary>
+            <a href="#eventos" data-route="eventos"><span class="nav-icon">T</span><span>Eventos</span></a>
+            <a href="#comunicacion" data-route="comunicacion"><span class="nav-icon">@</span><span>Comunicacion</span></a>
+            <a href="#reportes" data-route="reportes"><span class="nav-icon">R</span><span>Reportes</span></a>
+            <a href="#configuracion" data-route="configuracion"><span class="nav-icon">K</span><span>Configuracion</span></a>
+          </details>
         </nav>
 
         <div class="sidebar-card">
@@ -114,6 +85,16 @@
 
         <section id="app-view" class="view" tabindex="-1"></section>
       </main>
+    </div>
+
+    <div class="modal-backdrop" id="modal-backdrop" hidden>
+      <section class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <header class="modal-header">
+          <h2 id="modal-title">Detalle</h2>
+          <button class="icon-button" type="button" id="modal-close" aria-label="Cerrar">X</button>
+        </header>
+        <div id="modal-body"></div>
+      </section>
     </div>
 
     <script src="assets/js/app.js" defer></script>

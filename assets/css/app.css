@@ -127,6 +127,24 @@ button {
   white-space: nowrap;
 }
 
+.nav-group {
+  display: grid;
+  gap: 6px;
+}
+
+.nav-group summary {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 0 8px;
+  border-radius: 8px;
+  color: #abc3bc;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .nav-list a:hover,
 .nav-list a:focus-visible,
 .nav-list a.is-active {
@@ -145,6 +163,11 @@ button {
 }
 
 .sidebar-card {
+  display: none;
+}
+
+.nav-group[hidden],
+.nav-list a[hidden] {
   display: none;
 }
 
@@ -344,6 +367,14 @@ h1 {
   font-size: 17px;
 }
 
+.panel-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .toolbar {
   display: grid;
   gap: 10px;
@@ -372,6 +403,15 @@ h1 {
 .message-item,
 .report-card {
   padding: 12px;
+}
+
+.student-card {
+  text-align: left;
+  cursor: pointer;
+}
+
+button.student-card {
+  width: 100%;
 }
 
 .row {
@@ -645,6 +685,98 @@ h1 {
   color: var(--muted);
 }
 
+.dashboard-band {
+  display: grid;
+  gap: 14px;
+}
+
+.insight-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.insight-item {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fbfdfc;
+}
+
+.form-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.form-grid label {
+  display: grid;
+  gap: 6px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(16, 24, 32, 0.45);
+}
+
+.modal-backdrop[hidden] {
+  display: none;
+}
+
+.modal-panel {
+  width: min(100%, 720px);
+  max-height: min(86vh, 820px);
+  overflow: auto;
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.modal-header h2 {
+  margin: 0;
+}
+
+#modal-body {
+  padding: 14px;
+}
+
+.preview-head {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.preview-head .avatar {
+  width: 54px;
+  height: 54px;
+  flex-basis: 54px;
+}
+
 .login-shell {
   width: min(100%, 420px);
   margin: 8vh auto 0;
@@ -734,8 +866,14 @@ body:not(.is-authenticated) .app-shell {
     overflow: visible;
   }
 
-  .nav-list a {
+  .nav-list a,
+  .nav-group {
     width: 100%;
+  }
+
+  .nav-group a {
+    margin-left: 8px;
+    width: calc(100% - 8px);
   }
 
   .sidebar-card {
