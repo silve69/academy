@@ -268,6 +268,7 @@ h1 {
 .panel,
 .student-card,
 .group-card,
+.metric-card,
 .message-item,
 .payment-row,
 .report-card {
@@ -344,6 +345,7 @@ h1 {
 
 .student-card,
 .group-card,
+.metric-card,
 .message-item,
 .report-card {
   padding: 12px;
@@ -408,6 +410,11 @@ h1 {
 .badge.is-danger {
   background: #ffe5e1;
   color: #a33b30;
+}
+
+.badge.is-info {
+  background: #dff3fb;
+  color: #166482;
 }
 
 .schedule-list {
@@ -500,6 +507,89 @@ h1 {
   gap: 14px;
 }
 
+.three-column {
+  display: grid;
+  gap: 14px;
+}
+
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 11px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.data-table th {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.data-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.mini-action {
+  min-height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--green-dark);
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.detail-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.detail-row:last-child {
+  border-bottom: 0;
+}
+
+.metric-card strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 22px;
+}
+
+.stock-level {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 74px;
+  gap: 10px;
+  align-items: center;
+}
+
 .chart-bars {
   display: grid;
   gap: 10px;
@@ -547,6 +637,10 @@ h1 {
 
   .attendance-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .three-column {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
