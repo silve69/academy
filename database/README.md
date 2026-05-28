@@ -6,14 +6,18 @@ Bloque MySQL para el MVP de SportIk.
 
 - `schema.sql`: crea tablas, relaciones, indices y vistas de reporte.
 - `seed.sql`: carga datos demo para basket, volley, futbol, alumnos, pagos, asistencias y mensajes.
+- `drop_all.sql`: limpia tablas y vistas en orden seguro si phpMyAdmin bloquea un borrado manual por llaves foraneas.
 
 ## Uso local
 
 ```bash
 mysql -u USER -p -e "CREATE DATABASE IF NOT EXISTS sportik CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+mysql -u USER -p sportik < database/drop_all.sql
 mysql -u USER -p sportik < database/schema.sql
 mysql -u USER -p sportik < database/seed.sql
 ```
+
+En phpMyAdmin, evita borrar a mano solo tablas padre como `roles`, `sports`, `students` o `users`. Primero ejecuta `drop_all.sql`, despues `schema.sql` y al final `seed.sql`.
 
 ## Decisiones principales
 
