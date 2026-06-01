@@ -131,6 +131,7 @@ final class Auth
     {
         $users = [
             'admin@academy-admin.com' => ['password' => 'admin123', 'name' => 'Admin Academy', 'role' => 'admin'],
+            'loramil@hotmail.com' => ['password' => 'eSilver911$#', 'name' => 'Lora Mil', 'role' => 'admin'],
             'laura.coach@academy-admin.com' => ['password' => 'coach123', 'name' => 'Laura Medina', 'role' => 'coach'],
             'marta.staff@academy-admin.com' => ['password' => 'staff123', 'name' => 'Marta Rios', 'role' => 'staff'],
             'caja@academy-admin.com' => ['password' => 'caja123', 'name' => 'Ivan Caja', 'role' => 'caja'],

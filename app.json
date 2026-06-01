@@ -1,0 +1,116 @@
+{
+    "name": "Academy",
+    "namespace": "Academy",
+    "version": "1.0.0",
+    "framework": "ext",
+    "toolkit": "classic",
+    "theme": "theme-triton",
+    "indexHtmlPath": "index.html",
+    "requires": [
+        "font-awesome"
+    ],
+    "classpath": [
+        "app"
+    ],
+    "overrides": [
+        "overrides"
+    ],
+    "sass": {
+        "namespace": "Academy",
+        "etc": [
+            "sass/etc/all.scss"
+        ],
+        "var": [
+            "sass/var/all.scss",
+            "sass/var"
+        ],
+        "src": [
+            "sass/src"
+        ]
+    },
+    "js": [{
+        "path": "app.js",
+        "bundle": true
+    }],
+    "css": [{
+        "path": "${build.out.css.path}",
+        "bundle": true,
+        "exclude": ["fashion"]
+    }, {
+        "path": "assets/css/ext-app.css",
+        "bundle": false
+    }],
+    "loader": {
+        "cache": false,
+        "cacheParam": "_dc"
+    },
+    "development": {
+        "watch": {
+            "delay": 250
+        }
+    },
+    "production": {
+        "loader": {
+            "cache": "${build.timestamp}",
+            "cacheParam": "_dc"
+        },
+        "cache": {
+            "enable": true
+        },
+        "compressor": {
+            "type": "closure",
+            "warningLevel": "quiet"
+        }
+    },
+    "bootstrap": {
+        "base": "${app.dir}",
+        "manifest": "${build.id}.json",
+        "microloader": "bootstrap.js",
+        "css": "bootstrap.css"
+    },
+    "output": {
+        "base": "${workspace.build.dir}/${build.environment}/${app.name}",
+        "page": {
+            "path": "index.html",
+            "enable": false
+        },
+        "manifest": "${build.id}.json",
+        "resources": {
+            "path": "resources",
+            "shared": "resources"
+        },
+        "css": "${app.output.resources}/${app.name}-all.css",
+        "microloader": {
+            "path": "microloader.js",
+            "embed": false,
+            "enable": false
+        },
+        "appCache": {
+            "enable": false
+        }
+    },
+    "resources": [{
+        "path": "resources",
+        "output": "shared"
+    }],
+    "cache": {
+        "enable": false,
+        "deltas": false
+    },
+    "appCache": {
+        "cache": [
+            "index.html"
+        ],
+        "network": [
+            "*"
+        ],
+        "fallback": []
+    },
+    "builds": {
+        "classic": {
+            "toolkit": "classic",
+            "theme": "theme-triton"
+        }
+    },
+    "id": "2a5b4f35-89d6-40bc-9344-53f38b81a7d6"
+}

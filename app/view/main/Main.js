@@ -37,10 +37,15 @@ Ext.define('Academy.view.main.Main', {
         items: [{
             xtype: 'component',
             cls: 'aa-topbar-brand',
-            html: '<span class="aa-brand-mark aa-brand-mark-small">AA</span><strong>AcademyAdmin</strong>'
+            html: '<img src="assets/images/logo_small.png" alt="AcademyAdmin">'
         }, {
             xtype: 'button',
-            text: 'Menu',
+            cls: 'aa-mobile-menu-button',
+            ui: 'plain',
+            iconCls: 'x-fa fa-bars',
+            tooltip: 'Abrir menu',
+            width: 42,
+            height: 42,
             reference: 'menuButton',
             hidden: true,
             handler: 'onToggleMobileMenu'
@@ -55,36 +60,101 @@ Ext.define('Academy.view.main.Main', {
             cls: 'aa-user-text',
             text: ''
         }, {
+            xtype: 'component',
+            reference: 'profileAvatar',
+            cls: 'aa-profile-avatar',
+            html: ''
+        }, {
             xtype: 'button',
+            reference: 'settingsButton',
+            cls: 'aa-settings-button',
+            iconCls: 'x-fa fa-cog',
+            arrowVisible: false,
+            text: '',
+            width: 42,
+            height: 42,
+            menuAlign: 'tr-br',
+            menu: {
+                width: 220,
+                cls: 'aa-settings-menu',
+                items: [{
+                    xtype: 'container',
+                    cls: 'aa-settings-menu-head',
+                    layout: {
+                        type: 'hbox',
+                        align: 'middle'
+                    },
+                    items: [{
+                        xtype: 'image',
+                        src: 'assets/images/isotipo_small.png',
+                        alt: 'AcademyAdmin',
+                        width: 42,
+                        height: 42,
+                        margin: '0 12 0 0'
+                    }, {
+                        xtype: 'container',
+                        flex: 1,
+                        html: '<div class="aa-settings-app"><b>AcademyAdmin</b><span>Version 1.0.0</span></div>'
+                    }]
+                }, '-', {
+                    text: 'Mi Perfil',
+                    iconCls: 'x-fa fa-address-card',
+                    handler: 'onProfileClick'
+                }, {
+                    text: 'Configuracion',
+                    iconCls: 'x-fa fa-cog',
+                    handler: 'onSettingsClick'
+                }, '-', {
+                    text: 'Cerrar Sesion',
+                    iconCls: 'x-fa fa-power-off',
+                    handler: 'onLogoutClick'
+                }]
+            }
+        }, {
+            xtype: 'button',
+            reference: 'logoutButton',
             text: 'Salir',
             handler: 'onLogoutClick'
         }]
     }, {
         xtype: 'container',
+        reference: 'bodyWrap',
+        cls: 'aa-main-body',
         flex: 1,
         layout: {
             type: 'hbox',
             align: 'stretch'
         },
         items: [{
-            xtype: 'grid',
+            xtype: 'treepanel',
             reference: 'navigation',
             cls: 'aa-navigation',
-            width: 230,
+            width: 260,
             hideHeaders: true,
+            rootVisible: false,
+            useArrows: true,
+            animate: true,
+            lines: false,
             store: {
                 type: 'navigation'
             },
             columns: [{
+                xtype: 'treecolumn',
                 dataIndex: 'text',
-                flex: 1,
-                renderer: function (value, meta, record) {
-                    meta.tdCls = record.get('disabled') ? 'aa-nav-disabled' : '';
-                    return '<span class="' + record.get('iconCls') + '"></span>' + Ext.htmlEncode(value);
-                }
+                flex: 1
             }],
             listeners: {
-                select: 'onNavigationSelect'
+                beforeitemexpand: 'onNavigationBeforeItemExpand',
+                itemclick: 'onNavigationItemClick',
+                selectionchange: 'onNavigationSelectionChange'
+            }
+        }, {
+            xtype: 'component',
+            reference: 'mobileMenuMask',
+            cls: 'aa-mobile-menu-mask',
+            hidden: true,
+            listeners: {
+                afterrender: 'onMobileMaskReady'
             }
         }, {
             xtype: 'container',

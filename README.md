@@ -25,6 +25,8 @@ Dominio previsto: `academy-admin.com`.
 
 La interfaz principal usa una estructura modular inspirada en PodiAdmin y GreatFitness, pero preparada para una segunda etapa movil:
 
+- `app.json`: configuracion Sencha Cmd con toolkit classic y `theme-triton`.
+- `workspace.json`: apunta al SDK compartido `../ext-7.6.0`.
 - `app.js`: arranque de la aplicacion ExtJS.
 - `app/Application.js`: sesion, login y bootstrap general.
 - `app/util/Api.js`: cliente central para la API PHP.
@@ -34,6 +36,14 @@ La interfaz principal usa una estructura modular inspirada en PodiAdmin y GreatF
 - `assets/css/ext-app.css`: estilos propios de AcademyAdmin.
 
 La deteccion movil no depende solo de resolucion de pantalla. `Academy.util.Device` combina `Ext.os`, soporte touch, pointer coarse y user agent como respaldo.
+
+Para regenerar el tema Triton:
+
+```bash
+sencha app build development
+```
+
+El CSS generado se carga desde `build/development/Academy/resources/Academy-all.css`.
 
 ## Instalacion rapida
 

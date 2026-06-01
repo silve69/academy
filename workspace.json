@@ -1,0 +1,19 @@
+{
+    "apps": [
+        "."
+    ],
+
+    "frameworks": {
+        "ext": {
+            "path": "../ext-7.6.0",
+            "version": "7.6.0.41"
+        }
+    },
+    "build": {
+        "dir": "${workspace.dir}/build"
+    },
+    "packages": {
+        "dir": "${workspace.dir}/packages/local,${workspace.dir}/packages",
+        "extract": "${workspace.dir}/packages/remote"
+    }
+}
