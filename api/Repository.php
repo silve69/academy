@@ -440,7 +440,7 @@ final class Repository
     {
         $parts = preg_split('/\s+/', trim($name)) ?: [];
 
-        return count($parts) > 1 ? implode(' ', array_slice($parts, 1)) : 'SportIk';
+        return count($parts) > 1 ? implode(' ', array_slice($parts, 1)) : 'Academy';
     }
 
     private function statusToDb(string $status): string

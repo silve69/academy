@@ -1,5 +1,5 @@
--- SportIk MVP - sample data
--- Load after schema.sql: mysql -u USER -p sportik < database/seed.sql
+-- AcademyAdmin - sample data
+-- Load after schema.sql: mysql -u USER -p academy < database/seed.sql
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
@@ -110,18 +110,18 @@ INSERT INTO role_permissions (role_id, module, can_view, can_create, can_update,
   (4, 'reportes', TRUE, FALSE, FALSE, FALSE);
 
 INSERT INTO branches (id, name, code, address, phone, status) VALUES
-  (1, 'SportIk Centro', 'CENTRO', 'Av. Principal 100, Centro', '555-100-0100', 'active'),
-  (2, 'SportIk Norte', 'NORTE', 'Av. Norte 220, Industrial', '555-100-0200', 'active');
+  (1, 'Academy Centro', 'CENTRO', 'Av. Principal 100, Centro', '555-100-0100', 'active'),
+  (2, 'Academy Norte', 'NORTE', 'Av. Norte 220, Industrial', '555-100-0200', 'active');
 
 INSERT INTO users (id, role_id, branch_id, name, email, password_hash, phone, status) VALUES
-  (1, 1, 1, 'Admin SportIk', 'admin@sportik.test', '$2y$10$mhKMjXZOW0JbpzutXtLMYe5nln27LIo9h.d6pu3UIj.4r89jEmCea', '555-100-0001', 'active'),
-  (2, 2, 1, 'Laura Medina', 'laura.coach@sportik.test', '$2y$10$RqGYBmu9QmhUy3/nOFVtYuFcroPGVwgHPOTG/bUINSBR4GO5I2aI2', '555-100-0002', 'active'),
-  (3, 2, 1, 'Carlos Vega', 'carlos.coach@sportik.test', '$2y$10$RqGYBmu9QmhUy3/nOFVtYuFcroPGVwgHPOTG/bUINSBR4GO5I2aI2', '555-100-0003', 'active'),
-  (4, 3, 1, 'Marta Rios', 'marta.staff@sportik.test', '$2y$10$DEqnKQgOSjIOn7npKa/0fe0Yoi93DoN0ww8JtfibmOLhqYYJG8yp2', '555-100-0004', 'active'),
-  (5, 4, 1, 'Ivan Caja', 'caja@sportik.test', '$2y$10$xyYZsY2UoEjqp6I88dA0i.Fma0sxnTNK5rN0YUZbrrKBTk72kwpWC', '555-100-0005', 'active');
+  (1, 1, 1, 'Admin Academy', 'admin@academy-admin.com', '$2y$10$mhKMjXZOW0JbpzutXtLMYe5nln27LIo9h.d6pu3UIj.4r89jEmCea', '555-100-0001', 'active'),
+  (2, 2, 1, 'Laura Medina', 'laura.coach@academy-admin.com', '$2y$10$RqGYBmu9QmhUy3/nOFVtYuFcroPGVwgHPOTG/bUINSBR4GO5I2aI2', '555-100-0002', 'active'),
+  (3, 2, 1, 'Carlos Vega', 'carlos.coach@academy-admin.com', '$2y$10$RqGYBmu9QmhUy3/nOFVtYuFcroPGVwgHPOTG/bUINSBR4GO5I2aI2', '555-100-0003', 'active'),
+  (4, 3, 1, 'Marta Rios', 'marta.staff@academy-admin.com', '$2y$10$DEqnKQgOSjIOn7npKa/0fe0Yoi93DoN0ww8JtfibmOLhqYYJG8yp2', '555-100-0004', 'active'),
+  (5, 4, 1, 'Ivan Caja', 'caja@academy-admin.com', '$2y$10$xyYZsY2UoEjqp6I88dA0i.Fma0sxnTNK5rN0YUZbrrKBTk72kwpWC', '555-100-0005', 'active');
 
 INSERT INTO academy_settings (setting_key, setting_value, setting_group, description, updated_by) VALUES
-  ('academia_nombre', 'SportIk Academy', 'academia', 'Nombre publico de la academia', 1),
+  ('academia_nombre', 'AcademyAdmin', 'academia', 'Nombre publico de la academia', 1),
   ('moneda', 'MXN', 'finanzas', 'Moneda operativa', 1),
   ('tolerancia_asistencia_minutos', '10', 'operacion', 'Minutos antes de marcar retardo', 1);
 
@@ -178,8 +178,8 @@ INSERT INTO courts (id, branch_id, name, sport_id, capacity, status, notes) VALU
   (3, 1, 'Campo A', 3, 30, 'active', 'Futbol 7');
 
 INSERT INTO coaches (id, user_id, sport_id, name, phone, email, certification, status, hired_at) VALUES
-  (1, 2, 1, 'Laura Medina', '555-100-0002', 'laura.coach@sportik.test', 'Entrenadora nivel 1', 'active', '2026-01-10'),
-  (2, 3, 3, 'Carlos Vega', '555-100-0003', 'carlos.coach@sportik.test', 'Preparador fisico infantil', 'active', '2026-01-15');
+  (1, 2, 1, 'Laura Medina', '555-100-0002', 'laura.coach@academy-admin.com', 'Entrenadora nivel 1', 'active', '2026-01-10'),
+  (2, 3, 3, 'Carlos Vega', '555-100-0003', 'carlos.coach@academy-admin.com', 'Preparador fisico infantil', 'active', '2026-01-15');
 
 INSERT INTO sport_groups (id, sport_id, coach_user_id, coach_id, branch_id, court_id, name, level, min_age, max_age, capacity, monthly_fee, status) VALUES
   (1, 1, 2, 1, 1, 1, 'Basket U12 Mixto', 'beginner', 9, 12, 18, 750.00, 'active'),
@@ -264,7 +264,7 @@ INSERT INTO events (id, sport_id, branch_id, name, event_type, starts_at, ends_a
   (2, 3, 1, 'Amistoso U13', 'friendly', '2026-06-14 09:00:00', '2026-06-14 11:00:00', 'Campo A', 24, 'scheduled', 0.00, NULL);
 
 INSERT INTO tournaments (id, sport_id, branch_id, name, starts_on, ends_on, location, category, status, fee, notes) VALUES
-  (1, 3, 1, 'Copa SportIk Verano', '2026-07-06', '2026-07-10', 'Campo A', 'U13', 'open', 350.00, 'Fase de grupos y final'),
+  (1, 3, 1, 'Copa Academy Verano', '2026-07-06', '2026-07-10', 'Campo A', 'U13', 'open', 350.00, 'Fase de grupos y final'),
   (2, 1, 1, '3x3 Basket Kids', '2026-06-22', '2026-06-22', 'Cancha 1', 'U12', 'planned', 250.00, NULL);
 
 INSERT INTO tournament_registrations (tournament_id, student_id, group_id, status, notes) VALUES
@@ -275,7 +275,7 @@ INSERT INTO tournament_registrations (tournament_id, student_id, group_id, statu
 INSERT INTO products (id, sku, name, category, sale_price, cost, stock_quantity, min_stock, status) VALUES
   (1, 'UNI-BASK-12', 'Uniforme basket U12', 'Uniformes', 480.00, 320.00, 12, 5, 'active'),
   (2, 'BAL-FUT-5', 'Balon futbol #5', 'Equipo', 390.00, 250.00, 7, 4, 'active'),
-  (3, 'BOT-SIK-750', 'Termo SportIk 750ml', 'Accesorios', 180.00, 95.00, 18, 6, 'active');
+  (3, 'BOT-SIK-750', 'Termo Academy 750ml', 'Accesorios', 180.00, 95.00, 18, 6, 'active');
 
 INSERT INTO inventory_movements (product_id, movement_type, quantity, unit_cost, reference, notes, created_by) VALUES
   (1, 'in', 20, 320.00, 'COMP-1001', 'Compra inicial', 5),
@@ -297,9 +297,9 @@ INSERT INTO sale_items (sale_id, product_id, quantity, unit_price, total) VALUES
 INSERT INTO message_templates (id, name, channel, subject, body, status) VALUES
   (1, 'Recordatorio de pago', 'whatsapp', NULL, 'Hola {{tutor_name}}, te recordamos el pago pendiente de {{student_name}} por {{amount}}.', 'active'),
   (2, 'Clase cancelada', 'whatsapp', NULL, 'Hola {{tutor_name}}, la clase de {{group_name}} del {{class_date}} fue cancelada.', 'active'),
-  (3, 'Resumen de asistencia', 'email', 'Resumen de asistencia SportIk', 'Hola {{tutor_name}}, {{student_name}} asistio a {{present_count}} clases este mes.', 'active');
+  (3, 'Resumen de asistencia', 'email', 'Resumen de asistencia Academy', 'Hola {{tutor_name}}, {{student_name}} asistio a {{present_count}} clases este mes.', 'active');
 
 INSERT INTO messages (template_id, student_id, tutor_id, group_id, channel, recipient, subject, body, status, sent_at, created_by) VALUES
   (1, 5, 5, 1, 'whatsapp', '555-200-0105', NULL, 'Hola Elena, te recordamos el pago pendiente de Camila por 750.00.', 'sent', '2026-05-23 10:00:00', 4),
   (1, 4, 4, 3, 'whatsapp', '555-200-0104', NULL, 'Hola Jorge, te recordamos el pago pendiente de Mateo por 800.00.', 'queued', NULL, 4),
-  (3, 1, 1, 1, 'email', 'ana.garcia@example.test', 'Resumen de asistencia SportIk', 'Hola Ana, Sofia asistio a 2 clases este mes.', 'sent', '2026-05-24 08:00:00', 4);
+  (3, 1, 1, 1, 'email', 'ana.garcia@example.test', 'Resumen de asistencia Academy', 'Hola Ana, Sofia asistio a 2 clases este mes.', 'sent', '2026-05-24 08:00:00', 4);

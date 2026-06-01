@@ -1,6 +1,8 @@
-# SportIk MVP
+# AcademyAdmin
 
 Aplicacion web movil-first para administrar una academia deportiva.
+
+Dominio previsto: `academy-admin.com`.
 
 ## Modulos MVP
 
@@ -15,18 +17,32 @@ Aplicacion web movil-first para administrar una academia deportiva.
 
 ## Stack
 
-- Frontend: HTML, CSS y JavaScript
-- Backend: PHP con PDO
+- Frontend: ExtJS 6.6 classic sobre JavaScript
+- Backend: PHP con PDO y endpoints REST
 - Base de datos: MySQL
+
+## Arquitectura ExtJS
+
+La interfaz principal usa una estructura modular inspirada en PodiAdmin y GreatFitness, pero preparada para una segunda etapa movil:
+
+- `app.js`: arranque de la aplicacion ExtJS.
+- `app/Application.js`: sesion, login y bootstrap general.
+- `app/util/Api.js`: cliente central para la API PHP.
+- `app/util/Device.js`: deteccion de dispositivo por capacidades reales del navegador.
+- `app/store/`: stores ExtJS para recursos REST.
+- `app/view/`: vistas, controllers y modulos de UI.
+- `assets/css/ext-app.css`: estilos propios de AcademyAdmin.
+
+La deteccion movil no depende solo de resolucion de pantalla. `Academy.util.Device` combina `Ext.os`, soporte touch, pointer coarse y user agent como respaldo.
 
 ## Instalacion rapida
 
-1. Copia el proyecto en `http://localhost/projects/sportik`.
+1. Copia el proyecto en `http://localhost/projects/academy`.
 2. Si ya existe una instalacion previa y phpMyAdmin marca error de llaves foraneas, limpia con `database/drop_all.sql`.
 3. Crea la base de datos con `database/schema.sql`.
 4. Carga datos de ejemplo con `database/seed.sql`.
 5. Ajusta credenciales en `api/config.php` o crea `api/config.local.php`.
-6. Abre `http://localhost/projects/sportik`.
+6. Abre `http://localhost/projects/academy`.
 
 Si MySQL no esta configurado todavia, la API y el frontend usan datos de ejemplo para poder revisar el MVP.
 
@@ -45,9 +61,9 @@ La interfaz consulta estos endpoints y normaliza respuestas de MySQL o datos dem
 
 ## Accesos demo
 
-- Administrador: `admin@sportik.test` / `admin123`
-- Entrenador: `laura.coach@sportik.test` / `coach123`
-- Staff: `marta.staff@sportik.test` / `staff123`
-- Caja: `caja@sportik.test` / `caja123`
+- Administrador: `admin@academy-admin.com` / `admin123`
+- Entrenador: `laura.coach@academy-admin.com` / `coach123`
+- Staff: `marta.staff@academy-admin.com` / `staff123`
+- Caja: `caja@academy-admin.com` / `caja123`
 
 Los permisos se cargan desde `role_permissions` y el frontend oculta los modulos no permitidos para cada perfil.

@@ -18,7 +18,7 @@ final class Database
         $db = $this->config['database'] ?? [];
         $host = $db['host'] ?? '127.0.0.1';
         $port = (int) ($db['port'] ?? 3306);
-        $name = $db['name'] ?? 'sportik';
+        $name = $db['name'] ?? 'academy';
         $charset = $db['charset'] ?? 'utf8mb4';
         $user = $db['user'] ?? 'root';
         $password = $db['password'] ?? '';

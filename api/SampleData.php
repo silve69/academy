@@ -46,16 +46,16 @@ final class SampleData
                 ['id' => 3, 'deporte_id' => 3, 'deporte' => 'Futbol', 'nombre' => 'Futbol formativo', 'estado' => 'activo'],
             ],
             'cortes' => [
-                ['id' => 1, 'sucursal' => 'SportIk Centro', 'abierto_por' => 'Ivan Caja', 'apertura' => '2026-05-27 08:30:00', 'cierre' => '2026-05-27 20:15:00', 'esperado' => 1910.00, 'contado' => 1910.00, 'estado' => 'cerrado'],
-                ['id' => 2, 'sucursal' => 'SportIk Centro', 'abierto_por' => 'Ivan Caja', 'apertura' => '2026-05-28 08:30:00', 'cierre' => null, 'esperado' => 1480.00, 'contado' => null, 'estado' => 'abierto'],
+                ['id' => 1, 'sucursal' => 'Academy Centro', 'abierto_por' => 'Ivan Caja', 'apertura' => '2026-05-27 08:30:00', 'cierre' => '2026-05-27 20:15:00', 'esperado' => 1910.00, 'contado' => 1910.00, 'estado' => 'cerrado'],
+                ['id' => 2, 'sucursal' => 'Academy Centro', 'abierto_por' => 'Ivan Caja', 'apertura' => '2026-05-28 08:30:00', 'cierre' => null, 'esperado' => 1480.00, 'contado' => null, 'estado' => 'abierto'],
             ],
             'gastos' => [
-                ['id' => 1, 'sucursal' => 'SportIk Centro', 'concepto' => 'Balones de entrenamiento', 'monto' => 320.00, 'fecha' => '2026-05-27', 'metodo' => 'Efectivo', 'estado' => 'registrado'],
-                ['id' => 2, 'sucursal' => 'SportIk Centro', 'concepto' => 'Agua para torneo', 'monto' => 180.00, 'fecha' => '2026-05-28', 'metodo' => 'Efectivo', 'estado' => 'registrado'],
+                ['id' => 1, 'sucursal' => 'Academy Centro', 'concepto' => 'Balones de entrenamiento', 'monto' => 320.00, 'fecha' => '2026-05-27', 'metodo' => 'Efectivo', 'estado' => 'registrado'],
+                ['id' => 2, 'sucursal' => 'Academy Centro', 'concepto' => 'Agua para torneo', 'monto' => 180.00, 'fecha' => '2026-05-28', 'metodo' => 'Efectivo', 'estado' => 'registrado'],
             ],
             'entrenadores' => [
-                ['id' => 1, 'nombre' => 'Laura Medina', 'deporte' => 'Basket', 'telefono' => '555-100-0002', 'email' => 'laura.coach@sportik.test', 'certificacion' => 'Entrenadora nivel 1', 'estado' => 'activo'],
-                ['id' => 2, 'nombre' => 'Carlos Vega', 'deporte' => 'Futbol', 'telefono' => '555-100-0003', 'email' => 'carlos.coach@sportik.test', 'certificacion' => 'Preparador fisico infantil', 'estado' => 'activo'],
+                ['id' => 1, 'nombre' => 'Laura Medina', 'deporte' => 'Basket', 'telefono' => '555-100-0002', 'email' => 'laura.coach@academy-admin.com', 'certificacion' => 'Entrenadora nivel 1', 'estado' => 'activo'],
+                ['id' => 2, 'nombre' => 'Carlos Vega', 'deporte' => 'Futbol', 'telefono' => '555-100-0003', 'email' => 'carlos.coach@academy-admin.com', 'certificacion' => 'Preparador fisico infantil', 'estado' => 'activo'],
             ],
             'evaluaciones' => [
                 ['id' => 1, 'alumno' => 'Sofia Martinez', 'grupo' => 'Basquet Mini', 'entrenador' => 'Laura Medina', 'fecha_evaluacion' => '2026-05-24', 'puntaje_general' => 85.25, 'observaciones' => 'Muy buena disposicion'],
@@ -66,13 +66,13 @@ final class SampleData
                 ['id' => 2, 'nombre' => 'Amistoso U13', 'deporte' => 'Futbol', 'inicio' => '2026-06-14 09:00:00', 'lugar' => 'Campo A', 'capacidad' => 24, 'precio' => 0.00, 'estado' => 'programado'],
             ],
             'torneos' => [
-                ['id' => 1, 'nombre' => 'Copa SportIk Verano', 'deporte' => 'Futbol', 'fecha_inicio' => '2026-07-06', 'categoria' => 'U13', 'precio' => 350.00, 'estado' => 'abierto', 'inscritos' => 2],
+                ['id' => 1, 'nombre' => 'Copa Academy Verano', 'deporte' => 'Futbol', 'fecha_inicio' => '2026-07-06', 'categoria' => 'U13', 'precio' => 350.00, 'estado' => 'abierto', 'inscritos' => 2],
                 ['id' => 2, 'nombre' => '3x3 Basket Kids', 'deporte' => 'Basket', 'fecha_inicio' => '2026-06-22', 'categoria' => 'U12', 'precio' => 250.00, 'estado' => 'planeado', 'inscritos' => 1],
             ],
             'productos' => [
                 ['id' => 1, 'sku' => 'UNI-BASK-12', 'nombre' => 'Uniforme basket U12', 'categoria' => 'Uniformes', 'precio_venta' => 480.00, 'existencia' => 12, 'stock_minimo' => 5, 'estado' => 'activo'],
                 ['id' => 2, 'sku' => 'BAL-FUT-5', 'nombre' => 'Balon futbol #5', 'categoria' => 'Equipo', 'precio_venta' => 390.00, 'existencia' => 7, 'stock_minimo' => 4, 'estado' => 'activo'],
-                ['id' => 3, 'sku' => 'BOT-SIK-750', 'nombre' => 'Termo SportIk 750ml', 'categoria' => 'Accesorios', 'precio_venta' => 180.00, 'existencia' => 18, 'stock_minimo' => 6, 'estado' => 'activo'],
+                ['id' => 3, 'sku' => 'BOT-SIK-750', 'nombre' => 'Termo Academy 750ml', 'categoria' => 'Accesorios', 'precio_venta' => 180.00, 'existencia' => 18, 'stock_minimo' => 6, 'estado' => 'activo'],
             ],
             'inventario' => [
                 ['id' => 1, 'producto' => 'Uniforme basket U12', 'tipo_movimiento' => 'in', 'cantidad' => 20, 'referencia' => 'COMP-1001'],
@@ -92,17 +92,17 @@ final class SampleData
                 ['id' => 3, 'nombre' => 'staff', 'descripcion' => 'Operacion diaria'],
             ],
             'usuarios' => [
-                ['id' => 1, 'nombre' => 'Admin SportIk', 'email' => 'admin@sportik.test', 'rol' => 'admin', 'sucursal' => 'SportIk Centro', 'estado' => 'activo'],
-                ['id' => 2, 'nombre' => 'Laura Medina', 'email' => 'laura.coach@sportik.test', 'rol' => 'coach', 'sucursal' => 'SportIk Centro', 'estado' => 'activo'],
+                ['id' => 1, 'nombre' => 'Admin Academy', 'email' => 'admin@academy-admin.com', 'rol' => 'admin', 'sucursal' => 'Academy Centro', 'estado' => 'activo'],
+                ['id' => 2, 'nombre' => 'Laura Medina', 'email' => 'laura.coach@academy-admin.com', 'rol' => 'coach', 'sucursal' => 'Academy Centro', 'estado' => 'activo'],
             ],
             'sucursales' => [
-                ['id' => 1, 'nombre' => 'SportIk Centro', 'codigo' => 'CENTRO', 'direccion' => 'Av. Principal 100', 'telefono' => '555-100-0100', 'estado' => 'activo'],
-                ['id' => 2, 'nombre' => 'SportIk Norte', 'codigo' => 'NORTE', 'direccion' => 'Av. Norte 220', 'telefono' => '555-100-0200', 'estado' => 'activo'],
+                ['id' => 1, 'nombre' => 'Academy Centro', 'codigo' => 'CENTRO', 'direccion' => 'Av. Principal 100', 'telefono' => '555-100-0100', 'estado' => 'activo'],
+                ['id' => 2, 'nombre' => 'Academy Norte', 'codigo' => 'NORTE', 'direccion' => 'Av. Norte 220', 'telefono' => '555-100-0200', 'estado' => 'activo'],
             ],
             'canchas' => [
-                ['id' => 1, 'nombre' => 'Cancha 1', 'sucursal' => 'SportIk Centro', 'deporte' => 'Basket', 'capacidad' => 24, 'estado' => 'activo'],
-                ['id' => 2, 'nombre' => 'Cancha 2', 'sucursal' => 'SportIk Centro', 'deporte' => 'Volley', 'capacidad' => 24, 'estado' => 'activo'],
-                ['id' => 3, 'nombre' => 'Campo A', 'sucursal' => 'SportIk Centro', 'deporte' => 'Futbol', 'capacidad' => 30, 'estado' => 'activo'],
+                ['id' => 1, 'nombre' => 'Cancha 1', 'sucursal' => 'Academy Centro', 'deporte' => 'Basket', 'capacidad' => 24, 'estado' => 'activo'],
+                ['id' => 2, 'nombre' => 'Cancha 2', 'sucursal' => 'Academy Centro', 'deporte' => 'Volley', 'capacidad' => 24, 'estado' => 'activo'],
+                ['id' => 3, 'nombre' => 'Campo A', 'sucursal' => 'Academy Centro', 'deporte' => 'Futbol', 'capacidad' => 30, 'estado' => 'activo'],
             ],
             'metodos' => [
                 ['id' => 1, 'nombre' => 'Efectivo', 'codigo' => 'cash', 'estado' => 'activo'],
@@ -119,7 +119,7 @@ final class SampleData
                 ['id' => 2, 'nombre' => 'Clase cancelada', 'canal' => 'whatsapp', 'titulo' => null, 'mensaje' => 'La clase de {{group_name}} fue cancelada.', 'estado' => 'activo'],
             ],
             'academia' => [
-                ['id' => 1, 'clave' => 'academia_nombre', 'valor' => 'SportIk Academy', 'grupo' => 'academia', 'descripcion' => 'Nombre publico'],
+                ['id' => 1, 'clave' => 'academia_nombre', 'valor' => 'AcademyAdmin', 'grupo' => 'academia', 'descripcion' => 'Nombre publico'],
                 ['id' => 2, 'clave' => 'moneda', 'valor' => 'MXN', 'grupo' => 'finanzas', 'descripcion' => 'Moneda operativa'],
             ],
         ];

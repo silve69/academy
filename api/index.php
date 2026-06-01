@@ -37,7 +37,7 @@ if (!$currentUser) {
 
 if ($resource === '') {
     Response::ok([
-        'name' => $config['app']['name'] ?? 'SportIk API',
+        'name' => $config['app']['name'] ?? 'AcademyAdmin API',
         'endpoints' => [
             'GET /api/dashboard',
             'GET /api/reportes',
@@ -48,7 +48,7 @@ if ($resource === '') {
             'DELETE /api/{recurso}/{id}',
         ],
         'recursos' => Repository::resources(),
-    ], 'SportIk API lista', $meta);
+    ], 'AcademyAdmin API lista', $meta);
 }
 
 if ($resource === 'dashboard') {

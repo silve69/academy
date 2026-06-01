@@ -1,0 +1,397 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+    background: #eef2f7;
+}
+
+.aa-login-window .x-window-body {
+    background: #fff;
+}
+
+.aa-login-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.aa-login-brand strong,
+.aa-topbar-brand strong {
+    display: block;
+    color: #182235;
+    font-size: 18px;
+}
+
+.aa-login-brand span {
+    display: block;
+    color: #65738a;
+    font-size: 13px;
+}
+
+.aa-brand-mark {
+    display: inline-flex;
+    width: 46px;
+    height: 46px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: #19283f;
+    color: #fff;
+    font-weight: 800;
+}
+
+.aa-brand-mark-small {
+    width: 34px;
+    height: 34px;
+    margin-right: 10px;
+}
+
+.aa-topbar {
+    border: 0;
+    background: #fff;
+    box-shadow: 0 1px 6px rgba(30, 42, 60, 0.14);
+}
+
+.aa-topbar-brand {
+    display: flex;
+    min-width: 220px;
+    align-items: center;
+}
+
+.aa-title-text {
+    color: #182235;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.aa-user-text {
+    color: #5f6f86;
+    font-size: 13px;
+}
+
+.aa-navigation {
+    border: 0;
+    background: #223044;
+}
+
+.aa-navigation .x-grid-item {
+    background: #223044;
+    color: #d7dee9;
+}
+
+.aa-navigation .x-grid-item-selected,
+.aa-navigation .x-grid-item-over {
+    background: #30445f;
+    color: #fff;
+}
+
+.aa-nav-disabled {
+    opacity: 0.48;
+}
+
+.aa-icon {
+    display: inline-block;
+    width: 18px;
+    margin-right: 10px;
+}
+
+.aa-content {
+    background: #eef2f7;
+}
+
+.aa-page-body,
+.aa-grid-page .x-panel-body {
+    background: #eef2f7;
+}
+
+.aa-kpi-grid {
+    padding: 16px 16px 8px;
+}
+
+.aa-kpi-card {
+    min-height: 104px;
+    margin: 0 8px;
+    padding: 16px;
+    border: 1px solid rgba(30, 42, 60, 0.08);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(25, 39, 64, 0.08);
+}
+
+.aa-kpi-card span,
+.aa-kpi-card em {
+    display: block;
+    color: #65738a;
+    font-style: normal;
+}
+
+.aa-kpi-card strong {
+    display: block;
+    margin: 8px 0;
+    color: #172033;
+    font-size: 30px;
+}
+
+.aa-dashboard-grid {
+    padding: 0 8px 16px;
+}
+
+.aa-next-step {
+    color: #334155;
+    line-height: 1.55;
+}
+
+.aa-next-step code {
+    padding: 2px 5px;
+    border-radius: 4px;
+    background: #eef2f7;
+}
+
+.aa-badge {
+    display: inline-block;
+    min-width: 68px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.aa-badge-ok {
+    background: #dff7ea;
+    color: #17613a;
+}
+
+.aa-badge-warn {
+    background: #fff3cd;
+    color: #7a5200;
+}
+
+.aa-badge-danger {
+    background: #ffe2e0;
+    color: #9f1d16;
+}
+
+.aa-badge-neutral {
+    background: #e8eef6;
+    color: #4d5c70;
+}
+
+.aa-student-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.aa-student-cell strong,
+.aa-student-cell em {
+    display: block;
+    line-height: 1.25;
+}
+
+.aa-student-cell em {
+    color: #6b7890;
+    font-size: 12px;
+    font-style: normal;
+}
+
+.aa-avatar {
+    display: inline-flex;
+    width: 34px;
+    height: 34px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #214b7f, #1f9d88);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.aa-progress-cell,
+.aa-money-cell {
+    display: grid;
+    grid-template-columns: minmax(70px, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+}
+
+.aa-money-cell {
+    grid-template-columns: 64px minmax(70px, 1fr);
+}
+
+.aa-progress-track {
+    height: 8px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e8eef6;
+}
+
+.aa-progress-track span {
+    display: block;
+    height: 100%;
+    min-width: 4px;
+    border-radius: inherit;
+}
+
+.aa-progress-cell strong,
+.aa-money-cell strong {
+    color: #26364d;
+    font-size: 12px;
+}
+
+.aa-progress-strong {
+    background: linear-gradient(90deg, #20c997, #198754);
+}
+
+.aa-progress-ok {
+    background: linear-gradient(90deg, #34a0ff, #2457a6);
+}
+
+.aa-progress-warn {
+    background: linear-gradient(90deg, #f9c74f, #f8961e);
+}
+
+.aa-progress-danger {
+    background: linear-gradient(90deg, #ff6b6b, #c92a2a);
+}
+
+.aa-sport-tag {
+    display: inline-flex;
+    min-width: 92px;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.aa-sport-football {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.aa-sport-basket {
+    background: #ffedd5;
+    color: #9a3412;
+}
+
+.aa-sport-volley {
+    background: #e0f2fe;
+    color: #075985;
+}
+
+.aa-sport-track {
+    background: #f5e8ff;
+    color: #6b21a8;
+}
+
+.aa-sport-generic {
+    background: #e8eef6;
+    color: #334155;
+}
+
+.aa-state-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    margin-right: 8px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px rgba(30, 42, 60, 0.08);
+}
+
+.aa-dot-ok {
+    background: #22c55e;
+}
+
+.aa-dot-warn {
+    background: #f59e0b;
+}
+
+.aa-dot-danger {
+    background: #ef4444;
+}
+
+.aa-movement {
+    display: inline-flex;
+    width: 22px;
+    height: 22px;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.aa-time-slot {
+    display: grid;
+    grid-template-columns: 8px auto auto;
+    gap: 8px;
+    align-items: center;
+}
+
+.aa-time-slot span {
+    display: block;
+    width: 8px;
+    height: 32px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #2457a6, #20c997);
+}
+
+.aa-time-slot strong,
+.aa-time-slot em {
+    display: block;
+    color: #26364d;
+}
+
+.aa-time-slot em {
+    color: #718096;
+    font-style: normal;
+}
+
+.aa-channel {
+    display: inline-flex;
+    min-width: 84px;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.aa-channel-whatsapp {
+    background: #dcfce7;
+    color: #16723c;
+}
+
+.aa-channel-email {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.aa-channel-default {
+    background: #e8eef6;
+    color: #334155;
+}
+
+.aa-mobile-device .aa-navigation {
+    position: absolute;
+    z-index: 20;
+    height: 100%;
+    box-shadow: 8px 0 28px rgba(15, 23, 42, 0.18);
+}
+
+@media (max-width: 760px) {
+    .aa-topbar-brand {
+        min-width: 54px;
+    }
+
+    .aa-topbar-brand strong,
+    .aa-user-text {
+        display: none;
+    }
+}

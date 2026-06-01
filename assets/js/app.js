@@ -37,8 +37,8 @@ const fallbackData = {
   ],
   caja: {
     cortes: [
-      { fecha: "2026-05-28", responsable: "Admin SportIk", ingresos: 1470, egresos: 320, efectivo: 850, tarjeta: 0, transferencia: 620, estado: "Abierto" },
-      { fecha: "2026-05-27", responsable: "Admin SportIk", ingresos: 2550, egresos: 500, efectivo: 900, tarjeta: 850, transferencia: 800, estado: "Cerrado" }
+      { fecha: "2026-05-28", responsable: "Admin Academy", ingresos: 1470, egresos: 320, efectivo: 850, tarjeta: 0, transferencia: 620, estado: "Abierto" },
+      { fecha: "2026-05-27", responsable: "Admin Academy", ingresos: 2550, egresos: 500, efectivo: 900, tarjeta: 850, transferencia: 800, estado: "Cerrado" }
     ],
     movimientos: [
       { hora: "09:10", concepto: "Uniforme Sofia Diaz", tipo: "Ingreso", monto: 620, metodo: "Transferencia" },
@@ -70,7 +70,7 @@ const fallbackData = {
     { articulo: "Botiquin", categoria: "Seguridad", stock: 2, minimo: 2, ubicacion: "Gimnasio", estado: "Disponible" }
   ],
   configuracion: {
-    academia: "SportIk Academia",
+    academia: "AcademyAdmin",
     moneda: "MXN",
     asistenciaObjetivo: 90,
     pagos: "Mensualidad anticipada",
@@ -116,6 +116,10 @@ const modalBackdrop = document.querySelector("#modal-backdrop");
 const modalTitle = document.querySelector("#modal-title");
 const modalBody = document.querySelector("#modal-body");
 const modalClose = document.querySelector("#modal-close");
+const navCollapse = document.querySelector("#nav-collapse");
+const mobileMenuButton = document.querySelector("#mobile-menu-button");
+const mobileMenuBackdrop = document.querySelector("#mobile-menu-backdrop");
+const navStorageKey = "academy_nav_collapsed_v2";
 
 function money(value) {
   return new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 }).format(Number(value || 0));
@@ -154,6 +158,40 @@ function applyPermissions() {
   document.querySelectorAll(".nav-group").forEach((group) => {
     const visibleLinks = [...group.querySelectorAll("[data-route]")].filter((link) => !link.hidden);
     group.hidden = Boolean(currentUser) && visibleLinks.length === 0;
+  });
+
+  closeMenuGroups();
+}
+
+function setNavCollapsed(isCollapsed) {
+  document.body.classList.toggle("nav-collapsed", isCollapsed);
+  localStorage.setItem(navStorageKey, isCollapsed ? "1" : "0");
+  const appShell = document.querySelector(".app-shell");
+  if (appShell) {
+    appShell.style.gridTemplateColumns = isCollapsed ? "78px minmax(0, 1fr)" : "260px minmax(0, 1fr)";
+  }
+  closeMenuGroups();
+  if (!navCollapse) return;
+  navCollapse.innerHTML = isCollapsed ? '<i class="fa-solid fa-angles-right"></i>' : '<i class="fa-solid fa-angles-left"></i>';
+  navCollapse.setAttribute("aria-label", isCollapsed ? "Expandir menu" : "Contraer menu");
+  navCollapse.setAttribute("aria-expanded", String(!isCollapsed));
+}
+
+function setMobileMenuOpen(isOpen) {
+  document.body.classList.toggle("mobile-menu-open", isOpen);
+  if (mobileMenuBackdrop) mobileMenuBackdrop.hidden = !isOpen;
+  if (!mobileMenuButton) return;
+  mobileMenuButton.setAttribute("aria-expanded", String(isOpen));
+  mobileMenuButton.setAttribute("aria-label", isOpen ? "Cerrar menu" : "Abrir menu");
+}
+
+function groupForRoute(route) {
+  return document.querySelector(`.nav-group [data-route="${route}"]`)?.closest(".nav-group") || null;
+}
+
+function closeMenuGroups() {
+  document.querySelectorAll(".nav-group").forEach((group) => {
+    group.open = false;
   });
 }
 
@@ -201,7 +239,7 @@ function normalizeData(payload) {
 
   const alumnos = (data.alumnos || data.students || fallbackData.alumnos).map((student) => ({
     ...student,
-    nombre: student.nombre || `${student.first_name || ""} ${student.last_name || ""}`.trim() || "Alumno SportIk",
+    nombre: student.nombre || `${student.first_name || ""} ${student.last_name || ""}`.trim() || "Alumno Academy",
     edad: Number(student.edad || student.age || 0),
     grupo: student.grupo || student.group_name || "Sin grupo",
     estado: normalizeStatus(student.estado || student.status),
@@ -294,7 +332,7 @@ function normalizeCash(items, base) {
   return {
     cortes: (source.cortes || fallbackData.caja.cortes).map((cut) => ({
       fecha: cut.fecha || cut.date || "Hoy",
-      responsable: cut.responsable || cut.user || "Admin SportIk",
+      responsable: cut.responsable || cut.user || "Admin Academy",
       ingresos: Number(cut.ingresos || cut.income || ingresos),
       egresos: Number(cut.egresos || cut.expenses || 0),
       efectivo: Number(cut.efectivo || cut.cash || 0),
@@ -372,7 +410,7 @@ function normalizeEvents(items) {
     nombre: event.nombre || event.name || "Evento",
     tipo: event.tipo || event.type || "Evento",
     fecha: event.fecha || event.date || "Por definir",
-    sede: event.sede || event.location || "Sede SportIk",
+    sede: event.sede || event.location || "Sede Academy",
     inscritos: Number(event.inscritos || event.registered || 0),
     estado: event.estado || event.status || "Planeado"
   }));
@@ -660,7 +698,7 @@ function renderScheduleList(items) {
 }
 
 function renderAttendance() {
-  const selectedClass = sessionStorage.getItem("sportik_attendance_class") || appData.horarios[0]?.grupo || "todos";
+  const selectedClass = sessionStorage.getItem("academy_attendance_class") || appData.horarios[0]?.grupo || "todos";
   const visibleStudents = selectedClass === "todos" ? appData.alumnos : appData.alumnos.filter((student) => student.grupo === selectedClass);
   return `
     <section class="panel">
@@ -1075,7 +1113,7 @@ function bindViewEvents() {
   const attendanceClass = document.querySelector("#attendance-class");
   if (attendanceClass) {
     attendanceClass.addEventListener("change", () => {
-      sessionStorage.setItem("sportik_attendance_class", attendanceClass.value);
+      sessionStorage.setItem("academy_attendance_class", attendanceClass.value);
       render();
     });
   }
@@ -1083,19 +1121,20 @@ function bindViewEvents() {
 
 function showLogin(message = "") {
   document.body.classList.remove("is-authenticated");
+  setMobileMenuOpen(false);
   title.textContent = "Iniciar sesion";
   view.innerHTML = `
     <section class="login-shell">
       <form class="login-card" id="login-form">
-        <img class="login-logo" src="logo/logo_sportik.png" alt="SportIk">
+        <img class="login-logo" src="logo/logo_academy.png" alt="AcademyAdmin">
         <div>
-          <p class="eyebrow">Acceso SportIk</p>
+          <p class="eyebrow">Acceso AcademyAdmin</p>
           <h1>Iniciar sesion</h1>
           <p class="meta">Entra con un perfil para ver solo los modulos permitidos.</p>
         </div>
         <label>
           <span class="label">Email</span>
-          <input class="input" name="email" type="email" value="admin@sportik.test" autocomplete="username" required>
+          <input class="input" name="email" type="email" value="admin@academy-admin.com" autocomplete="username" required>
         </label>
         <label>
           <span class="label">Contrasena</span>
@@ -1104,9 +1143,9 @@ function showLogin(message = "") {
         <button class="primary-action" type="submit">Entrar</button>
         <p class="login-error" id="login-error">${message}</p>
         <div class="login-demo">
-          <span class="meta">Demo: admin@sportik.test / admin123</span>
-          <span class="meta">Coach: laura.coach@sportik.test / coach123</span>
-          <span class="meta">Caja: caja@sportik.test / caja123</span>
+          <span class="meta">Demo: admin@academy-admin.com / admin123</span>
+          <span class="meta">Coach: laura.coach@academy-admin.com / coach123</span>
+          <span class="meta">Caja: caja@academy-admin.com / caja123</span>
         </div>
       </form>
     </section>
@@ -1199,12 +1238,39 @@ function render() {
 }
 
 window.addEventListener("hashchange", () => setRoute(location.hash.replace("#", "")));
+window.addEventListener("resize", closeMenuGroups);
 
 document.querySelectorAll("[data-route]").forEach((link) => {
   link.addEventListener("click", (event) => {
     event.preventDefault();
+    setMobileMenuOpen(false);
     location.hash = link.dataset.route;
   });
+});
+
+document.querySelectorAll(".nav-group").forEach((group) => {
+  group.addEventListener("toggle", () => {
+    if (!group.open) return;
+    if (document.body.classList.contains("nav-collapsed") && window.matchMedia("(min-width: 1024px)").matches) {
+      group.open = false;
+      return;
+    }
+    document.querySelectorAll(".nav-group").forEach((otherGroup) => {
+      if (otherGroup !== group) otherGroup.open = false;
+    });
+  });
+});
+
+navCollapse.addEventListener("click", () => {
+  setNavCollapsed(!document.body.classList.contains("nav-collapsed"));
+});
+
+mobileMenuButton.addEventListener("click", () => {
+  setMobileMenuOpen(!document.body.classList.contains("mobile-menu-open"));
+});
+
+mobileMenuBackdrop.addEventListener("click", () => {
+  setMobileMenuOpen(false);
 });
 
 refreshButton.addEventListener("click", loadData);
@@ -1251,5 +1317,6 @@ logoutButton.addEventListener("click", async () => {
   showLogin();
 });
 
+setNavCollapsed(false);
 showLogin();
 loadSession();

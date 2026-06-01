@@ -13,7 +13,7 @@ if (is_file($localConfigPath)) {
 date_default_timezone_set($baseConfig['app']['timezone'] ?? 'America/Mexico_City');
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
-    session_name('sportik_session');
+    session_name('academy_session');
     session_start([
         'cookie_httponly' => true,
         'cookie_samesite' => 'Lax',

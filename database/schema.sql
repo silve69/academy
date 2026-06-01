@@ -1,5 +1,5 @@
--- SportIk MVP - MySQL schema
--- Load with: mysql -u USER -p sportik < database/schema.sql
+-- AcademyAdmin - MySQL schema
+-- Load with: mysql -u USER -p academy < database/schema.sql
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;

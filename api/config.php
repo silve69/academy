@@ -2,7 +2,7 @@
 
 return [
     'app' => [
-        'name' => 'SportIk API',
+        'name' => 'AcademyAdmin API',
         'environment' => 'development',
         'timezone' => 'America/Mexico_City',
         'debug' => true,
@@ -15,7 +15,7 @@ return [
     'database' => [
         'host' => '127.0.0.1',
         'port' => 3306,
-        'name' => 'sportik',
+        'name' => 'academy',
         'user' => 'root',
         'password' => '',
         'charset' => 'utf8mb4',

@@ -130,10 +130,10 @@ final class Auth
     private function fallbackLogin(string $email, string $password): ?array
     {
         $users = [
-            'admin@sportik.test' => ['password' => 'admin123', 'name' => 'Admin SportIk', 'role' => 'admin'],
-            'laura.coach@sportik.test' => ['password' => 'coach123', 'name' => 'Laura Medina', 'role' => 'coach'],
-            'marta.staff@sportik.test' => ['password' => 'staff123', 'name' => 'Marta Rios', 'role' => 'staff'],
-            'caja@sportik.test' => ['password' => 'caja123', 'name' => 'Ivan Caja', 'role' => 'caja'],
+            'admin@academy-admin.com' => ['password' => 'admin123', 'name' => 'Admin Academy', 'role' => 'admin'],
+            'laura.coach@academy-admin.com' => ['password' => 'coach123', 'name' => 'Laura Medina', 'role' => 'coach'],
+            'marta.staff@academy-admin.com' => ['password' => 'staff123', 'name' => 'Marta Rios', 'role' => 'staff'],
+            'caja@academy-admin.com' => ['password' => 'caja123', 'name' => 'Ivan Caja', 'role' => 'caja'],
         ];
 
         $user = $users[$email] ?? null;

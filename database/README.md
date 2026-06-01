@@ -1,6 +1,6 @@
-# SportIk Database
+# AcademyAdmin Database
 
-Bloque MySQL y API PHP para el MVP de SportIk.
+Bloque MySQL y API PHP para AcademyAdmin.
 
 ## Archivos
 
@@ -12,10 +12,10 @@ Bloque MySQL y API PHP para el MVP de SportIk.
 ## Uso local
 
 ```bash
-mysql -u USER -p -e "CREATE DATABASE IF NOT EXISTS sportik CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-mysql -u USER -p sportik < database/drop_all.sql
-mysql -u USER -p sportik < database/schema.sql
-mysql -u USER -p sportik < database/seed.sql
+mysql -u USER -p -e "CREATE DATABASE IF NOT EXISTS academy CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+mysql -u USER -p academy < database/drop_all.sql
+mysql -u USER -p academy < database/schema.sql
+mysql -u USER -p academy < database/seed.sql
 ```
 
 En phpMyAdmin, evita borrar a mano solo tablas padre como `roles`, `sports`, `students` o `users`. Primero ejecuta `drop_all.sql`, despues `schema.sql` y al final `seed.sql`.
@@ -31,7 +31,7 @@ Recursos principales: `alumnos`, `grupos`, `horarios`, `asistencia`, `pagos`, `c
 - `roles` define perfiles administrativos.
 - `role_permissions` define permisos por modulo: ver, crear, actualizar y eliminar.
 - `users.password_hash` usa `password_hash()` de PHP.
-- Acceso demo administrador: `admin@sportik.test` / `admin123`.
+- Acceso demo administrador: `admin@academy-admin.com` / `admin123`.
 
 ## Decisiones principales
 

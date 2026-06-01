@@ -1,4 +1,4 @@
--- SportIk MVP - safe database cleanup
+-- AcademyAdmin - safe database cleanup
 -- Use this before schema.sql if phpMyAdmin blocks parent table drops.
 
 SET NAMES utf8mb4;
