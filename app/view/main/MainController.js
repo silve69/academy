@@ -220,6 +220,14 @@ Ext.define('Academy.view.main.MainController', {
         mask.getEl().on('click', this.closeMobileMenu, this);
     },
 
+    onSettingsButtonClick: function () {
+        var nav = this.lookup('navigation');
+
+        if (nav && !nav.isHidden()) {
+            this.closeMobileMenu();
+        }
+    },
+
     openMobileMenu: function () {
         var nav = this.lookup('navigation');
         var mask = this.lookup('mobileMenuMask');

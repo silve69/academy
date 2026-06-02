@@ -96,40 +96,9 @@ body {
     height: 42px;
 }
 
-.aa-settings-button .x-btn-wrap,
-.aa-settings-button .x-btn-button {
-    width: 42px;
-    height: 42px !important;
-}
-
-.aa-settings-button {
-    position: relative;
-}
-
-.aa-settings-button .x-btn-wrap {
-    position: relative;
-    overflow: visible;
-    background-image: none !important;
-    background-position: initial !important;
-}
-
-.aa-settings-button .x-btn-button {
-    position: relative;
-    display: block;
-}
-
 .aa-settings-button .x-btn-icon-el {
-    position: absolute !important;
-    left: 50% !important;
-    top: 50% !important;
-    width: 24px;
-    height: 22px;
-    margin-left: -12px;
-    margin-top: -11px;
     color: #223044;
     font-size: 19px;
-    line-height: 22px;
-    text-align: center;
 }
 
 .aa-user-text {
@@ -582,7 +551,7 @@ body {
     position: absolute;
     z-index: 15;
     inset: 0;
-    background: rgba(15, 23, 42, 0.38);
+    background: transparent;
     will-change: opacity;
 }
 

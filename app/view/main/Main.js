@@ -69,10 +69,10 @@ Ext.define('Academy.view.main.Main', {
             reference: 'settingsButton',
             cls: 'aa-settings-button',
             iconCls: 'x-fa fa-cog',
-            arrowVisible: false,
             text: '',
-            width: 42,
+            width: 58,
             height: 42,
+            handler: 'onSettingsButtonClick',
             menuAlign: 'tr-br',
             menu: {
                 width: 220,
